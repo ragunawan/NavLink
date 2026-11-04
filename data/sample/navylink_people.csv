@@ -1,0 +1,177 @@
+Email,Full Name,Organization,Job Title,Work Phone,Areas of Expertise
+finley.parker.001@navylink-demo.example,Finley Parker,Navy Budget Insights Lab (Demo),Financial Systems Analyst,202-555-0100,Financial Management; Budget Execution; Dashboards
+devon.barnes.002@navylink-demo.example,Devon Barnes,Navy Budget Insights Lab (Demo),Fiscal Data Scientist,,Financial Forecasting; AI/ML; Data Science
+adrian.cole.003@navylink-demo.example,Adrian Cole,Navy Budget Insights Lab (Demo),Financial Product Lead,,Financial Management; Product Management; Data Governance
+noel.keller.004@navylink-demo.example,Noel Keller,Navy Budget Insights Lab (Demo),BI Developer,202-555-0103,Tableau; Power BI; Reporting
+indigo.brooks.005@navylink-demo.example,Indigo Brooks,Navy Budget Insights Lab (Demo),Budget Integration Engineer,,Data Engineering; BSO Crosswalk; SQL
+avery.mendez.006@navylink-demo.example,Avery Mendez,Navy Budget Insights Lab (Demo),Financial Policy Analyst,,Appropriations; Budget Execution; Data Quality
+alex.walsh.007@navylink-demo.example,Alex Walsh,Navy Budget Insights Lab (Demo),Analytics Engineer,202-555-0106,Python; SQL; Financial Management
+reese.diaz.008@navylink-demo.example,Reese Diaz,Navy Budget Insights Lab (Demo),Program Data Steward,,Data Governance; Financial Management; Metadata
+marin.delgado.009@navylink-demo.example,Marin Delgado,Fleet Resource Analytics Cell (Demo),Financial Systems Analyst,,Financial Management; Budget Execution; Dashboards
+elliot.foster.010@navylink-demo.example,Elliot Foster,Fleet Resource Analytics Cell (Demo),Fiscal Data Scientist,202-555-0109,Financial Forecasting; AI/ML; Data Science
+shay.gibson.011@navylink-demo.example,Shay Gibson,Fleet Resource Analytics Cell (Demo),Financial Product Lead,,Financial Management; Product Management; Data Governance
+jessie.farrell.012@navylink-demo.example,Jessie Farrell,Fleet Resource Analytics Cell (Demo),BI Developer,,Tableau; Power BI; Reporting
+jordan.tan.013@navylink-demo.example,Jordan Tan,Fleet Resource Analytics Cell (Demo),Budget Integration Engineer,202-555-0112,Data Engineering; BSO Crosswalk; SQL
+quinn.mercer.014@navylink-demo.example,Quinn Mercer,Fleet Resource Analytics Cell (Demo),Financial Policy Analyst,,Appropriations; Budget Execution; Data Quality
+emerson.ortiz.015@navylink-demo.example,Emerson Ortiz,Fleet Resource Analytics Cell (Demo),Analytics Engineer,,Python; SQL; Financial Management
+sage.lawson.016@navylink-demo.example,Sage Lawson,Fleet Resource Analytics Cell (Demo),Program Data Steward,202-555-0115,Data Governance; Financial Management; Metadata
+tatum.vargas.017@navylink-demo.example,Tatum Vargas,Navy Comptroller Prototype Studio (Demo),Financial Systems Analyst,,Financial Management; Budget Execution; Dashboards
+ari.patel.018@navylink-demo.example,Ari Patel,Navy Comptroller Prototype Studio (Demo),Fiscal Data Scientist,,Financial Forecasting; AI/ML; Data Science
+sam.jordan.019@navylink-demo.example,Sam Jordan,Navy Comptroller Prototype Studio (Demo),Financial Product Lead,202-555-0118,Financial Management; Product Management; Data Governance
+taylor.grant.020@navylink-demo.example,Taylor Grant,Navy Comptroller Prototype Studio (Demo),BI Developer,,Tableau; Power BI; Reporting
+parker.lin.021@navylink-demo.example,Parker Lin,Navy Comptroller Prototype Studio (Demo),Budget Integration Engineer,,Data Engineering; BSO Crosswalk; SQL
+jamie.whitaker.022@navylink-demo.example,Jamie Whitaker,Navy Comptroller Prototype Studio (Demo),Financial Policy Analyst,202-555-0121,Appropriations; Budget Execution; Data Quality
+bailey.santos.023@navylink-demo.example,Bailey Santos,Navy Comptroller Prototype Studio (Demo),Analytics Engineer,,Python; SQL; Financial Management
+blair.palmer.024@navylink-demo.example,Blair Palmer,Navy Comptroller Prototype Studio (Demo),Program Data Steward,,Data Governance; Financial Management; Metadata
+dakota.bell.025@navylink-demo.example,Dakota Bell,NAVSUP Logistics Prototyping Lab (Demo),Supply Chain Analyst,202-555-0124,Logistics; Inventory; Forecasting
+marley.bradley.026@navylink-demo.example,Marley Bradley,NAVSUP Logistics Prototyping Lab (Demo),Logistics Data Scientist,,Data Science; Demand Forecasting; AI/ML
+morgan.nguyen.027@navylink-demo.example,Morgan Nguyen,NAVSUP Logistics Prototyping Lab (Demo),Supply Systems Engineer,,Software Development; Supply Systems; APIs
+casey.reynolds.028@navylink-demo.example,Casey Reynolds,NAVSUP Logistics Prototyping Lab (Demo),Requisition Product Manager,202-555-0127,Logistics; Product Management; Data Governance
+arden.rios.029@navylink-demo.example,Arden Rios,NAVSUP Logistics Prototyping Lab (Demo),Inventory Optimization Analyst,,Operations Research; Inventory Optimization; SQL
+robin.quinlan.030@navylink-demo.example,Robin Quinlan,NAVSUP Logistics Prototyping Lab (Demo),Logistics BI Developer,,Tableau; Logistics; Dashboards
+jules.chen.031@navylink-demo.example,Jules Chen,NAVSUP Logistics Prototyping Lab (Demo),Supply Data Steward,202-555-0130,Data Governance; Procurement; Logistics
+remy.watkins.032@navylink-demo.example,Remy Watkins,NAVSUP Logistics Prototyping Lab (Demo),Repair Parts Integration Lead,,Maintenance; Logistics; Data Integration
+lee.ramirez.033@navylink-demo.example,Lee Ramirez,Fleet Supply Innovation Hub (Demo),Supply Chain Analyst,,Logistics; Inventory; Forecasting
+riley.price.034@navylink-demo.example,Riley Price,Fleet Supply Innovation Hub (Demo),Logistics Data Scientist,202-555-0133,Data Science; Demand Forecasting; AI/ML
+drew.carver.035@navylink-demo.example,Drew Carver,Fleet Supply Innovation Hub (Demo),Supply Systems Engineer,,Software Development; Supply Systems; APIs
+kendall.ross.036@navylink-demo.example,Kendall Ross,Fleet Supply Innovation Hub (Demo),Requisition Product Manager,,Logistics; Product Management; Data Governance
+frankie.hayes.037@navylink-demo.example,Frankie Hayes,Fleet Supply Innovation Hub (Demo),Inventory Optimization Analyst,202-555-0136,Operations Research; Inventory Optimization; SQL
+kai.stone.038@navylink-demo.example,Kai Stone,Fleet Supply Innovation Hub (Demo),Logistics BI Developer,,Tableau; Logistics; Dashboards
+robinette.singh.039@navylink-demo.example,Robinette Singh,Fleet Supply Innovation Hub (Demo),Supply Data Steward,,Data Governance; Procurement; Logistics
+ash.sullivan.040@navylink-demo.example,Ash Sullivan,Fleet Supply Innovation Hub (Demo),Repair Parts Integration Lead,202-555-0139,Maintenance; Logistics; Data Integration
+cameron.kim.041@navylink-demo.example,Cameron Kim,Maritime Distribution Analytics Cell (Demo),Supply Chain Analyst,,Logistics; Inventory; Forecasting
+skyler.bennett.042@navylink-demo.example,Skyler Bennett,Maritime Distribution Analytics Cell (Demo),Logistics Data Scientist,,Data Science; Demand Forecasting; AI/ML
+harper.hale.043@navylink-demo.example,Harper Hale,Maritime Distribution Analytics Cell (Demo),Supply Systems Engineer,202-555-0142,Software Development; Supply Systems; APIs
+micah.morales.044@navylink-demo.example,Micah Morales,Maritime Distribution Analytics Cell (Demo),Requisition Product Manager,,Logistics; Product Management; Data Governance
+charlie.reed.045@navylink-demo.example,Charlie Reed,Maritime Distribution Analytics Cell (Demo),Inventory Optimization Analyst,,Operations Research; Inventory Optimization; SQL
+hayden.chung.046@navylink-demo.example,Hayden Chung,Maritime Distribution Analytics Cell (Demo),Logistics BI Developer,202-555-0145,Tableau; Logistics; Dashboards
+lennox.douglas.047@navylink-demo.example,Lennox Douglas,Maritime Distribution Analytics Cell (Demo),Supply Data Steward,,Data Governance; Procurement; Logistics
+rowan.murphy.048@navylink-demo.example,Rowan Murphy,Maritime Distribution Analytics Cell (Demo),Repair Parts Integration Lead,,Maintenance; Logistics; Data Integration
+finley.parker.049@navylink-demo.example,Finley Parker,Fleet Readiness Modeling Office (Demo),Fleet Readiness Analyst,202-555-0148,Readiness; Operational Analytics; Dashboards
+devon.barnes.050@navylink-demo.example,Devon Barnes,Fleet Readiness Modeling Office (Demo),Mission Risk Modeler,,AI/ML; Readiness; Risk Modeling
+adrian.cole.051@navylink-demo.example,Adrian Cole,Fleet Readiness Modeling Office (Demo),Readiness Data Engineer,,SQL; Data Engineering; Readiness
+noel.keller.052@navylink-demo.example,Noel Keller,Fleet Readiness Modeling Office (Demo),Fleet Operations Product Lead,202-555-0151,Readiness; Product Management; Mission Analysis
+indigo.brooks.053@navylink-demo.example,Indigo Brooks,Fleet Readiness Modeling Office (Demo),Readiness Reporting Specialist,,Readiness; CASREP; Reporting
+avery.mendez.054@navylink-demo.example,Avery Mendez,Fleet Readiness Modeling Office (Demo),Operations Research Analyst,,Operations Research; Readiness; Statistics
+alex.walsh.055@navylink-demo.example,Alex Walsh,Fleet Readiness Modeling Office (Demo),Readiness Data Steward,202-555-0154,Data Governance; Readiness; Metadata
+reese.diaz.056@navylink-demo.example,Reese Diaz,Fleet Readiness Modeling Office (Demo),Decision Support Developer,,Software Development; Dashboards; Python
+marin.delgado.057@navylink-demo.example,Marin Delgado,Atlantic Fleet Decision Lab (Demo),Fleet Readiness Analyst,,Readiness; Operational Analytics; Dashboards
+elliot.foster.058@navylink-demo.example,Elliot Foster,Atlantic Fleet Decision Lab (Demo),Mission Risk Modeler,202-555-0157,AI/ML; Readiness; Risk Modeling
+shay.gibson.059@navylink-demo.example,Shay Gibson,Atlantic Fleet Decision Lab (Demo),Readiness Data Engineer,,SQL; Data Engineering; Readiness
+jessie.farrell.060@navylink-demo.example,Jessie Farrell,Atlantic Fleet Decision Lab (Demo),Fleet Operations Product Lead,,Readiness; Product Management; Mission Analysis
+jordan.tan.061@navylink-demo.example,Jordan Tan,Atlantic Fleet Decision Lab (Demo),Readiness Reporting Specialist,202-555-0160,Readiness; CASREP; Reporting
+quinn.mercer.062@navylink-demo.example,Quinn Mercer,Atlantic Fleet Decision Lab (Demo),Operations Research Analyst,,Operations Research; Readiness; Statistics
+emerson.ortiz.063@navylink-demo.example,Emerson Ortiz,Atlantic Fleet Decision Lab (Demo),Readiness Data Steward,,Data Governance; Readiness; Metadata
+sage.lawson.064@navylink-demo.example,Sage Lawson,Atlantic Fleet Decision Lab (Demo),Decision Support Developer,202-555-0163,Software Development; Dashboards; Python
+tatum.vargas.065@navylink-demo.example,Tatum Vargas,Pacific Fleet Capability Lab (Demo),Fleet Readiness Analyst,,Readiness; Operational Analytics; Dashboards
+ari.patel.066@navylink-demo.example,Ari Patel,Pacific Fleet Capability Lab (Demo),Mission Risk Modeler,,AI/ML; Readiness; Risk Modeling
+sam.jordan.067@navylink-demo.example,Sam Jordan,Pacific Fleet Capability Lab (Demo),Readiness Data Engineer,202-555-0166,SQL; Data Engineering; Readiness
+taylor.grant.068@navylink-demo.example,Taylor Grant,Pacific Fleet Capability Lab (Demo),Fleet Operations Product Lead,,Readiness; Product Management; Mission Analysis
+parker.lin.069@navylink-demo.example,Parker Lin,Pacific Fleet Capability Lab (Demo),Readiness Reporting Specialist,,Readiness; CASREP; Reporting
+jamie.whitaker.070@navylink-demo.example,Jamie Whitaker,Pacific Fleet Capability Lab (Demo),Operations Research Analyst,202-555-0169,Operations Research; Readiness; Statistics
+bailey.santos.071@navylink-demo.example,Bailey Santos,Pacific Fleet Capability Lab (Demo),Readiness Data Steward,,Data Governance; Readiness; Metadata
+blair.palmer.072@navylink-demo.example,Blair Palmer,Pacific Fleet Capability Lab (Demo),Decision Support Developer,,Software Development; Dashboards; Python
+dakota.bell.073@navylink-demo.example,Dakota Bell,NAVSEA Sustainment Analytics Cell (Demo),Reliability Engineer,202-555-0172,Maintenance; Reliability; Failure Prediction
+marley.bradley.074@navylink-demo.example,Marley Bradley,NAVSEA Sustainment Analytics Cell (Demo),Maintenance ML Engineer,,AI/ML; Predictive Maintenance; Python
+morgan.nguyen.075@navylink-demo.example,Morgan Nguyen,NAVSEA Sustainment Analytics Cell (Demo),Sustainment Data Analyst,,Maintenance; Work Orders; SQL
+casey.reynolds.076@navylink-demo.example,Casey Reynolds,NAVSEA Sustainment Analytics Cell (Demo),Ship Availability Planner,202-555-0175,Ship Avails; Scheduling; Maintenance
+arden.rios.077@navylink-demo.example,Arden Rios,NAVSEA Sustainment Analytics Cell (Demo),Maintenance Product Lead,,Product Management; Maintenance; Fleet Operations
+robin.quinlan.078@navylink-demo.example,Robin Quinlan,NAVSEA Sustainment Analytics Cell (Demo),CASREP Documentation Specialist,,CASREP; Documentation; Readiness
+jules.chen.079@navylink-demo.example,Jules Chen,NAVSEA Sustainment Analytics Cell (Demo),Condition Monitoring Engineer,202-555-0178,Telemetry; Sensors; AI/ML
+remy.watkins.080@navylink-demo.example,Remy Watkins,NAVSEA Sustainment Analytics Cell (Demo),Repair Prioritization Analyst,,Logistics; Maintenance; Operations Research
+lee.ramirez.081@navylink-demo.example,Lee Ramirez,Ship Maintenance Experiment Office (Demo),Reliability Engineer,,Maintenance; Reliability; Failure Prediction
+riley.price.082@navylink-demo.example,Riley Price,Ship Maintenance Experiment Office (Demo),Maintenance ML Engineer,202-555-0181,AI/ML; Predictive Maintenance; Python
+drew.carver.083@navylink-demo.example,Drew Carver,Ship Maintenance Experiment Office (Demo),Sustainment Data Analyst,,Maintenance; Work Orders; SQL
+kendall.ross.084@navylink-demo.example,Kendall Ross,Ship Maintenance Experiment Office (Demo),Ship Availability Planner,,Ship Avails; Scheduling; Maintenance
+frankie.hayes.085@navylink-demo.example,Frankie Hayes,Ship Maintenance Experiment Office (Demo),Maintenance Product Lead,202-555-0184,Product Management; Maintenance; Fleet Operations
+kai.stone.086@navylink-demo.example,Kai Stone,Ship Maintenance Experiment Office (Demo),CASREP Documentation Specialist,,CASREP; Documentation; Readiness
+robinette.singh.087@navylink-demo.example,Robinette Singh,Ship Maintenance Experiment Office (Demo),Condition Monitoring Engineer,,Telemetry; Sensors; AI/ML
+ash.sullivan.088@navylink-demo.example,Ash Sullivan,Ship Maintenance Experiment Office (Demo),Repair Prioritization Analyst,202-555-0187,Logistics; Maintenance; Operations Research
+cameron.kim.089@navylink-demo.example,Cameron Kim,Surface Reliability Modeling Lab (Demo),Reliability Engineer,,Maintenance; Reliability; Failure Prediction
+skyler.bennett.090@navylink-demo.example,Skyler Bennett,Surface Reliability Modeling Lab (Demo),Maintenance ML Engineer,,AI/ML; Predictive Maintenance; Python
+harper.hale.091@navylink-demo.example,Harper Hale,Surface Reliability Modeling Lab (Demo),Sustainment Data Analyst,202-555-0190,Maintenance; Work Orders; SQL
+micah.morales.092@navylink-demo.example,Micah Morales,Surface Reliability Modeling Lab (Demo),Ship Availability Planner,,Ship Avails; Scheduling; Maintenance
+charlie.reed.093@navylink-demo.example,Charlie Reed,Surface Reliability Modeling Lab (Demo),Maintenance Product Lead,,Product Management; Maintenance; Fleet Operations
+hayden.chung.094@navylink-demo.example,Hayden Chung,Surface Reliability Modeling Lab (Demo),CASREP Documentation Specialist,202-555-0193,CASREP; Documentation; Readiness
+lennox.douglas.095@navylink-demo.example,Lennox Douglas,Surface Reliability Modeling Lab (Demo),Condition Monitoring Engineer,,Telemetry; Sensors; AI/ML
+rowan.murphy.096@navylink-demo.example,Rowan Murphy,Surface Reliability Modeling Lab (Demo),Repair Prioritization Analyst,,Logistics; Maintenance; Operations Research
+finley.parker.097@navylink-demo.example,Finley Parker,Navy Workforce Analytics Studio (Demo),Workforce Analyst,202-555-0196,Personnel; Workforce Planning; Dashboards
+devon.barnes.098@navylink-demo.example,Devon Barnes,Navy Workforce Analytics Studio (Demo),Training Data Scientist,,AI/ML; Personnel; Training Analytics
+adrian.cole.099@navylink-demo.example,Adrian Cole,Navy Workforce Analytics Studio (Demo),Human Capital Product Lead,,Product Management; Personnel; Data Governance
+noel.keller.100@navylink-demo.example,Noel Keller,Navy Workforce Analytics Studio (Demo),Talent Analytics Engineer,202-555-0199,Python; SQL; Workforce Analytics
+indigo.brooks.101@navylink-demo.example,Indigo Brooks,Navy Workforce Analytics Studio (Demo),Skills Taxonomy Specialist,,Personnel; Taxonomy; Metadata
+avery.mendez.102@navylink-demo.example,Avery Mendez,Navy Workforce Analytics Studio (Demo),Workforce BI Developer,,Tableau; Personnel; Reporting
+alex.walsh.103@navylink-demo.example,Alex Walsh,Navy Workforce Analytics Studio (Demo),Personnel Data Steward,202-555-0102,Data Governance; Personnel; Data Quality
+reese.diaz.104@navylink-demo.example,Reese Diaz,Navy Workforce Analytics Studio (Demo),Workforce Planning Researcher,,Workforce Planning; Forecasting; Readiness
+marin.delgado.105@navylink-demo.example,Marin Delgado,Fleet Talent Insights Lab (Demo),Workforce Analyst,,Personnel; Workforce Planning; Dashboards
+elliot.foster.106@navylink-demo.example,Elliot Foster,Fleet Talent Insights Lab (Demo),Training Data Scientist,202-555-0105,AI/ML; Personnel; Training Analytics
+shay.gibson.107@navylink-demo.example,Shay Gibson,Fleet Talent Insights Lab (Demo),Human Capital Product Lead,,Product Management; Personnel; Data Governance
+jessie.farrell.108@navylink-demo.example,Jessie Farrell,Fleet Talent Insights Lab (Demo),Talent Analytics Engineer,,Python; SQL; Workforce Analytics
+jordan.tan.109@navylink-demo.example,Jordan Tan,Fleet Talent Insights Lab (Demo),Skills Taxonomy Specialist,202-555-0108,Personnel; Taxonomy; Metadata
+quinn.mercer.110@navylink-demo.example,Quinn Mercer,Fleet Talent Insights Lab (Demo),Workforce BI Developer,,Tableau; Personnel; Reporting
+emerson.ortiz.111@navylink-demo.example,Emerson Ortiz,Fleet Talent Insights Lab (Demo),Personnel Data Steward,,Data Governance; Personnel; Data Quality
+sage.lawson.112@navylink-demo.example,Sage Lawson,Fleet Talent Insights Lab (Demo),Workforce Planning Researcher,202-555-0111,Workforce Planning; Forecasting; Readiness
+tatum.vargas.113@navylink-demo.example,Tatum Vargas,PEO Ships Acquisition Prototype Cell (Demo),Acquisition Program Analyst,,Acquisition; Cost Schedule Performance; Reporting
+ari.patel.114@navylink-demo.example,Ari Patel,PEO Ships Acquisition Prototype Cell (Demo),Ship Delivery Data Scientist,,Ship Delivery; AI/ML; Forecasting
+sam.jordan.115@navylink-demo.example,Sam Jordan,PEO Ships Acquisition Prototype Cell (Demo),Program Performance Lead,202-555-0114,Acquisition; Product Management; Risk Management
+taylor.grant.116@navylink-demo.example,Taylor Grant,PEO Ships Acquisition Prototype Cell (Demo),Earned Value Analyst,,Earned Value; Acquisition; Forecasting
+parker.lin.117@navylink-demo.example,Parker Lin,PEO Ships Acquisition Prototype Cell (Demo),Schedule Integration Engineer,,Integrated Master Schedule; Data Engineering; Python
+jamie.whitaker.118@navylink-demo.example,Jamie Whitaker,PEO Ships Acquisition Prototype Cell (Demo),Cost Analytics Developer,202-555-0117,Data Science; Acquisition; SQL
+bailey.santos.119@navylink-demo.example,Bailey Santos,PEO Ships Acquisition Prototype Cell (Demo),Contract Data Steward,,Data Governance; Contract Management; Acquisition
+blair.palmer.120@navylink-demo.example,Blair Palmer,PEO Ships Acquisition Prototype Cell (Demo),Shipbuilding Systems Analyst,,Ship Delivery; Acquisition; Dashboards
+dakota.bell.121@navylink-demo.example,Dakota Bell,Naval Program Performance Lab (Demo),Acquisition Program Analyst,202-555-0120,Acquisition; Cost Schedule Performance; Reporting
+marley.bradley.122@navylink-demo.example,Marley Bradley,Naval Program Performance Lab (Demo),Ship Delivery Data Scientist,,Ship Delivery; AI/ML; Forecasting
+morgan.nguyen.123@navylink-demo.example,Morgan Nguyen,Naval Program Performance Lab (Demo),Program Performance Lead,,Acquisition; Product Management; Risk Management
+casey.reynolds.124@navylink-demo.example,Casey Reynolds,Naval Program Performance Lab (Demo),Earned Value Analyst,202-555-0123,Earned Value; Acquisition; Forecasting
+arden.rios.125@navylink-demo.example,Arden Rios,Naval Program Performance Lab (Demo),Schedule Integration Engineer,,Integrated Master Schedule; Data Engineering; Python
+robin.quinlan.126@navylink-demo.example,Robin Quinlan,Naval Program Performance Lab (Demo),Cost Analytics Developer,,Data Science; Acquisition; SQL
+jules.chen.127@navylink-demo.example,Jules Chen,Naval Program Performance Lab (Demo),Contract Data Steward,202-555-0126,Data Governance; Contract Management; Acquisition
+remy.watkins.128@navylink-demo.example,Remy Watkins,Naval Program Performance Lab (Demo),Shipbuilding Systems Analyst,,Ship Delivery; Acquisition; Dashboards
+lee.ramirez.129@navylink-demo.example,Lee Ramirez,Ship Delivery Innovation Office (Demo),Acquisition Program Analyst,,Acquisition; Cost Schedule Performance; Reporting
+riley.price.130@navylink-demo.example,Riley Price,Ship Delivery Innovation Office (Demo),Ship Delivery Data Scientist,202-555-0129,Ship Delivery; AI/ML; Forecasting
+drew.carver.131@navylink-demo.example,Drew Carver,Ship Delivery Innovation Office (Demo),Program Performance Lead,,Acquisition; Product Management; Risk Management
+kendall.ross.132@navylink-demo.example,Kendall Ross,Ship Delivery Innovation Office (Demo),Earned Value Analyst,,Earned Value; Acquisition; Forecasting
+frankie.hayes.133@navylink-demo.example,Frankie Hayes,Ship Delivery Innovation Office (Demo),Schedule Integration Engineer,202-555-0132,Integrated Master Schedule; Data Engineering; Python
+kai.stone.134@navylink-demo.example,Kai Stone,Ship Delivery Innovation Office (Demo),Cost Analytics Developer,,Data Science; Acquisition; SQL
+robinette.singh.135@navylink-demo.example,Robinette Singh,Ship Delivery Innovation Office (Demo),Contract Data Steward,,Data Governance; Contract Management; Acquisition
+ash.sullivan.136@navylink-demo.example,Ash Sullivan,Ship Delivery Innovation Office (Demo),Shipbuilding Systems Analyst,202-555-0135,Ship Delivery; Acquisition; Dashboards
+cameron.kim.137@navylink-demo.example,Cameron Kim,Fleet Cyber Data Lab (Demo),Cyber Defense Analyst,,Cybersecurity; Incident Triage; Reporting
+skyler.bennett.138@navylink-demo.example,Skyler Bennett,Fleet Cyber Data Lab (Demo),Security Automation Engineer,,Python; Cybersecurity; Automation
+harper.hale.139@navylink-demo.example,Harper Hale,Fleet Cyber Data Lab (Demo),Cyber Data Scientist,202-555-0138,AI/ML; Cybersecurity; Risk Modeling
+micah.morales.140@navylink-demo.example,Micah Morales,Fleet Cyber Data Lab (Demo),Security Product Lead,,Cybersecurity; Product Management; Data Governance
+charlie.reed.141@navylink-demo.example,Charlie Reed,Fleet Cyber Data Lab (Demo),Vulnerability Management Analyst,,Vulnerability Management; Cybersecurity; Dashboards
+hayden.chung.142@navylink-demo.example,Hayden Chung,Fleet Cyber Data Lab (Demo),Cyber Data Engineer,202-555-0141,Data Engineering; SQL; Security Monitoring
+lennox.douglas.143@navylink-demo.example,Lennox Douglas,Fleet Cyber Data Lab (Demo),Compliance Specialist,,Security Controls; Risk Management; Documentation
+rowan.murphy.144@navylink-demo.example,Rowan Murphy,Fleet Cyber Data Lab (Demo),Security Data Steward,,Cybersecurity; Data Governance; Metadata
+finley.parker.145@navylink-demo.example,Finley Parker,Naval Defensive Automation Studio (Demo),Cyber Defense Analyst,202-555-0144,Cybersecurity; Incident Triage; Reporting
+devon.barnes.146@navylink-demo.example,Devon Barnes,Naval Defensive Automation Studio (Demo),Security Automation Engineer,,Python; Cybersecurity; Automation
+adrian.cole.147@navylink-demo.example,Adrian Cole,Naval Defensive Automation Studio (Demo),Cyber Data Scientist,,AI/ML; Cybersecurity; Risk Modeling
+noel.keller.148@navylink-demo.example,Noel Keller,Naval Defensive Automation Studio (Demo),Security Product Lead,202-555-0147,Cybersecurity; Product Management; Data Governance
+indigo.brooks.149@navylink-demo.example,Indigo Brooks,Naval Defensive Automation Studio (Demo),Vulnerability Management Analyst,,Vulnerability Management; Cybersecurity; Dashboards
+avery.mendez.150@navylink-demo.example,Avery Mendez,Naval Defensive Automation Studio (Demo),Cyber Data Engineer,,Data Engineering; SQL; Security Monitoring
+alex.walsh.151@navylink-demo.example,Alex Walsh,Naval Defensive Automation Studio (Demo),Compliance Specialist,202-555-0150,Security Controls; Risk Management; Documentation
+reese.diaz.152@navylink-demo.example,Reese Diaz,Naval Defensive Automation Studio (Demo),Security Data Steward,,Cybersecurity; Data Governance; Metadata
+marin.delgado.153@navylink-demo.example,Marin Delgado,Navy AI Exploration Lab (Demo),Government AI Researcher,,Government LLMs; AI/ML; Model Evaluation
+elliot.foster.154@navylink-demo.example,Elliot Foster,Navy AI Exploration Lab (Demo),LLM Platform Engineer,202-555-0153,LLMs; Python; Software Development
+shay.gibson.155@navylink-demo.example,Shay Gibson,Navy AI Exploration Lab (Demo),Enterprise Search Specialist,,Semantic Search; Knowledge Management; Embeddings
+jessie.farrell.156@navylink-demo.example,Jessie Farrell,Navy AI Exploration Lab (Demo),Tableau Automation Engineer,,Tableau; Python; Automation
+jordan.tan.157@navylink-demo.example,Jordan Tan,Navy AI Exploration Lab (Demo),Data Catalog Product Lead,202-555-0156,Data Governance; Metadata; Product Management
+quinn.mercer.158@navylink-demo.example,Quinn Mercer,Navy AI Exploration Lab (Demo),API Integration Developer,,APIs; Software Development; Data Engineering
+emerson.ortiz.159@navylink-demo.example,Emerson Ortiz,Navy AI Exploration Lab (Demo),Automation Reliability Analyst,,Automation; Observability; Reporting
+sage.lawson.160@navylink-demo.example,Sage Lawson,Navy AI Exploration Lab (Demo),Navy AI Governance Analyst,202-555-0159,AI Policy; Data Governance; Security Review
+tatum.vargas.161@navylink-demo.example,Tatum Vargas,Maritime Data Exchange Pilot (Demo),Government AI Researcher,,Government LLMs; AI/ML; Model Evaluation
+ari.patel.162@navylink-demo.example,Ari Patel,Maritime Data Exchange Pilot (Demo),LLM Platform Engineer,,LLMs; Python; Software Development
+sam.jordan.163@navylink-demo.example,Sam Jordan,Maritime Data Exchange Pilot (Demo),Enterprise Search Specialist,202-555-0162,Semantic Search; Knowledge Management; Embeddings
+taylor.grant.164@navylink-demo.example,Taylor Grant,Maritime Data Exchange Pilot (Demo),Tableau Automation Engineer,,Tableau; Python; Automation
+parker.lin.165@navylink-demo.example,Parker Lin,Maritime Data Exchange Pilot (Demo),Data Catalog Product Lead,,Data Governance; Metadata; Product Management
+jamie.whitaker.166@navylink-demo.example,Jamie Whitaker,Maritime Data Exchange Pilot (Demo),API Integration Developer,202-555-0165,APIs; Software Development; Data Engineering
+bailey.santos.167@navylink-demo.example,Bailey Santos,Maritime Data Exchange Pilot (Demo),Automation Reliability Analyst,,Automation; Observability; Reporting
+blair.palmer.168@navylink-demo.example,Blair Palmer,Maritime Data Exchange Pilot (Demo),Navy AI Governance Analyst,,AI Policy; Data Governance; Security Review
+dakota.bell.169@navylink-demo.example,Dakota Bell,Navy Reporting Automation Studio (Demo),Government AI Researcher,202-555-0168,Government LLMs; AI/ML; Model Evaluation
+marley.bradley.170@navylink-demo.example,Marley Bradley,Navy Reporting Automation Studio (Demo),LLM Platform Engineer,,LLMs; Python; Software Development
+morgan.nguyen.171@navylink-demo.example,Morgan Nguyen,Navy Reporting Automation Studio (Demo),Enterprise Search Specialist,,Semantic Search; Knowledge Management; Embeddings
+casey.reynolds.172@navylink-demo.example,Casey Reynolds,Navy Reporting Automation Studio (Demo),Tableau Automation Engineer,202-555-0171,Tableau; Python; Automation
+arden.rios.173@navylink-demo.example,Arden Rios,Navy Reporting Automation Studio (Demo),Data Catalog Product Lead,,Data Governance; Metadata; Product Management
+robin.quinlan.174@navylink-demo.example,Robin Quinlan,Navy Reporting Automation Studio (Demo),API Integration Developer,,APIs; Software Development; Data Engineering
+jules.chen.175@navylink-demo.example,Jules Chen,Navy Reporting Automation Studio (Demo),Automation Reliability Analyst,202-555-0174,Automation; Observability; Reporting
+remy.watkins.176@navylink-demo.example,Remy Watkins,Navy Reporting Automation Studio (Demo),Navy AI Governance Analyst,,AI Policy; Data Governance; Security Review
