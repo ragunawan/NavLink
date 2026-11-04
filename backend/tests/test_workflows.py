@@ -69,7 +69,7 @@ def test_restricted_records_do_not_influence_public_scores(client, curator):
         r.pop("elapsed_ms")
         return r
     before = snapshot()
-    response = client.patch(PREFIX + "/projects/maint-07", headers=curator, json={"description": "SECRET_SENTINEL predictive maintenance " * 50, "tags": ["predictive", "maintenance"]})
+    response = client.patch(PREFIX + "/projects/maint-07", headers=curator, json={"description": "SECRET_SENTINEL predictive maintenance " * 50})
     assert response.status_code == 200
     assert snapshot() == before
     search = client.get(PREFIX + "/search", params={"q": "SECRET_SENTINEL", "mode": "keyword"}).json()

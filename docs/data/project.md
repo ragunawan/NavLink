@@ -17,8 +17,6 @@
 | Documentation URL | URL | N | Link to documentation, user guides, or technical documentation. |
 | Datasource | String | N | Name of Datasource |
 | Access Information | Text | N | Instructions for accessing the project or requesting access. |
-| Keywords / Tags | List | N | Searchable keywords describing project functionality, technology, and mission relevance. |
 | Technologies Used | List | N | Technologies, programming languages, platforms, or frameworks used. |
-| File(s) | Files (PDF/CSV/ETC) | N | Files Related to Project |
 | Date Created | Date | Y | Date the project was added to the catalog. |
 | Last Updated | Date | Y | Date the project was updated. |

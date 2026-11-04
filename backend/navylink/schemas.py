@@ -1,11 +1,76 @@
 from datetime import date, datetime
+import re
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, JsonValue, field_validator, model_validator
 
-PROJECT_TYPES = ["Dataset", "Dashboard", "Software tool", "Automation", "Model", "Application", "Analytics product"]
+PROJECT_TYPES = ["Dataset", "Dashboard", "Software", "Automation", "Model", "Application", "Analytics Product", "Documentation", "Other", "Software tool", "Analytics product"]
 STATUSES = ["Concept", "In Development", "Operational", "Retired", "Seeking Collaborators"]
-DOMAINS = ["Financial management", "Logistics", "Readiness", "Maintenance", "Personnel", "Acquisition", "Cybersecurity"]
+DOMAINS = ["Financial management", "Logistics", "Readiness", "Maintenance", "Personnel", "Acquisition", "Cybersecurity", "Other"]
+NETWORKS = ["NMCI", "CANES", "SIPR", "Other"]
+
+
+def normalize_email(value):
+    value = value.strip().casefold()
+    if len(value) > 254 or not re.fullmatch(r"[^@\s]+@[^@\s.]+(?:\.[^@\s.]+)+", value):
+        raise ValueError("Provide a valid email address")
+    return value
+
+
+class RecordPolicy(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    visibility: Literal["public", "internal", "group"] = "public"
+    allowed_groups: list[str] = Field(default_factory=list, max_length=20)
+
+    @field_validator("allowed_groups")
+    @classmethod
+    def validate_groups(cls, values):
+        if any(not value.strip() or len(value) > 200 for value in values):
+            raise ValueError("Groups must be nonempty and at most 200 characters")
+        return list(dict.fromkeys(value.strip() for value in values))
+
+    @model_validator(mode="after")
+    def group_policy(self):
+        if self.visibility == "group" and not self.allowed_groups:
+            raise ValueError("Group visibility requires at least one authorized group")
+        return self
+
+
+class PersonInput(RecordPolicy):
+    email: str
+    full_name: str = Field(min_length=1, max_length=160)
+    organization: str = Field(min_length=2, max_length=160)
+    job_title: str = Field(min_length=1, max_length=160)
+    work_phone: str | None = Field(default=None, max_length=80)
+    areas_of_expertise: list[str] = Field(default_factory=list, max_length=30)
+
+    _email = field_validator("email")(normalize_email)
+
+    @field_validator("areas_of_expertise")
+    @classmethod
+    def expertise(cls, values):
+        if any(not value.strip() or len(value) > 200 for value in values):
+            raise ValueError("Expertise values must be nonempty and at most 200 characters")
+        return list(dict.fromkeys(value.strip() for value in values))
+
+
+class PersonOut(PersonInput):
+    @model_validator(mode="after")
+    def group_policy(self):
+        return self
+
+
+class DatasourceInput(RecordPolicy):
+    name: str = Field(min_length=1, max_length=160)
+    description: str = Field(min_length=1, max_length=5000)
+    domain: str = Field(min_length=2, max_length=100)
+    organization: str = Field(min_length=2, max_length=160)
+
+
+class DatasourceOut(DatasourceInput):
+    @model_validator(mode="after")
+    def group_policy(self):
+        return self
 
 
 class Contact(BaseModel):
@@ -25,10 +90,18 @@ class ProjectInput(BaseModel):
     name: str = Field(min_length=3, max_length=160)
     description: str = Field(min_length=20, max_length=5000)
     mission_problem: str = Field(min_length=10, max_length=3000)
-    project_type: Literal["Dataset", "Dashboard", "Software tool", "Automation", "Model", "Application", "Analytics product"]
+    project_type: Literal["Dataset", "Dashboard", "Software", "Software tool", "Automation", "Model", "Application", "Analytics Product", "Analytics product", "Documentation", "Other"]
     domain: str = Field(min_length=2, max_length=100)
     organization: str = Field(min_length=2, max_length=160)
     status: Literal["Concept", "In Development", "Operational", "Retired", "Seeking Collaborators"]
+    classification: str | None = Field(default=None, min_length=1, max_length=100)
+    network_accessibility: list[Literal["NMCI", "CANES", "SIPR", "Other"]] = Field(default_factory=list, max_length=4)
+    primary_poc_email: str | None = None
+    team_members: list[str] = Field(default_factory=list, max_length=100)
+    sponsors: list[str] = Field(default_factory=list, max_length=30)
+    project_url: HttpUrl | None = None
+    datasource: str | None = Field(default=None, min_length=1, max_length=160)
+    date_created: date | None = None
     technical_summary: str = Field(default="", max_length=3000)
     contacts: list[Contact] = Field(default_factory=list, max_length=10)
     repository_url: HttpUrl | None = None
@@ -39,7 +112,6 @@ class ProjectInput(BaseModel):
     visibility: Literal["public", "internal", "group"] = "public"
     allowed_groups: list[str] = Field(default_factory=list, max_length=20)
     technologies: list[str] = Field(default_factory=list, max_length=30)
-    tags: list[str] = Field(default_factory=list, max_length=30)
     datasets: list[Dataset] = Field(default_factory=list, max_length=20)
     use_cases: list[str] = Field(default_factory=list, max_length=20)
     intended_users: list[str] = Field(default_factory=list, max_length=20)
@@ -49,7 +121,27 @@ class ProjectInput(BaseModel):
     integration: str | None = Field(default=None, max_length=500)
     extensions: dict[str, str] = Field(default_factory=dict)
 
-    @field_validator("tags", "technologies", "use_cases", "allowed_groups", "intended_users")
+    @field_validator("primary_poc_email")
+    @classmethod
+    def primary_email(cls, value):
+        return normalize_email(value) if value is not None else None
+
+    @field_validator("team_members")
+    @classmethod
+    def member_emails(cls, values):
+        return list(dict.fromkeys(normalize_email(value) for value in values))
+
+    @field_validator("classification", "datasource", mode="before")
+    @classmethod
+    def trim_metadata(cls, value):
+        return value.strip() if isinstance(value, str) else value
+
+    @field_validator("network_accessibility")
+    @classmethod
+    def deduplicate_networks(cls, values):
+        return list(dict.fromkeys(values))
+
+    @field_validator("technologies", "use_cases", "allowed_groups", "intended_users", "sponsors")
     @classmethod
     def clean_lists(cls, value):
         if any(not x.strip() or len(x) > 200 for x in value):
@@ -63,15 +155,28 @@ class ProjectInput(BaseModel):
         return self
 
 
+class ProjectCreate(ProjectInput):
+    classification: str = Field(min_length=1, max_length=100)
+    network_accessibility: list[Literal["NMCI", "CANES", "SIPR", "Other"]] = Field(min_length=1, max_length=4)
+    primary_poc_email: str
+
+
 class ProjectOut(ProjectInput):
     id: str
     synthetic: bool = True
     contacts_withheld: bool = False
+    personnel_withheld: bool = False
+    datasource_withheld: bool = False
 
     @model_validator(mode="after")
     def group_policy(self):
         # Responses intentionally redact membership policy.
         return self
+
+
+class ProjectPage(BaseModel):
+    total: int
+    items: list[ProjectOut]
 
 
 class SearchHit(BaseModel):
@@ -133,7 +238,6 @@ class CompareRequest(BaseModel):
 class Comparison(BaseModel):
     projects: list[ProjectOut]
     shared_datasets: list[str]
-    shared_tags: list[str]
     potential_overlap: str
     differences: list[str]
     open_questions: list[str]

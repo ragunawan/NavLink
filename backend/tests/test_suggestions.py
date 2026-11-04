@@ -14,7 +14,7 @@ def test_suggestions_are_editable_text_extraction_without_catalog_writes(client)
     assert set(result["technologies"]) == {"Python", "React"}
     assert "Budget execution ledger" in result["datasets"]
     assert result["evidence"]
-    assert not {"organization", "status", "contacts", "access_instructions"} & result.keys()
+    assert not {"organization", "status", "contacts", "access_instructions", "tags", "keywords", "files"} & result.keys()
     with client.app.state.factory() as session:
         assert session.scalar(select(func.count()).select_from(Project)) == count
 

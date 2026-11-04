@@ -37,6 +37,25 @@ class Run(Base):
     payload: Mapped[dict] = mapped_column(JSON)
 
 
+class Person(Base):
+    __tablename__ = "people"
+    email: Mapped[str] = mapped_column(String, primary_key=True)
+    visibility: Mapped[str] = mapped_column(String, index=True)
+    payload: Mapped[dict] = mapped_column(JSON)
+
+
+class Datasource(Base):
+    __tablename__ = "datasources"
+    name: Mapped[str] = mapped_column(String, primary_key=True)
+    visibility: Mapped[str] = mapped_column(String, index=True)
+    payload: Mapped[dict] = mapped_column(JSON)
+
+
+class CatalogMigration(Base):
+    __tablename__ = "catalog_migrations"
+    name: Mapped[str] = mapped_column(String, primary_key=True)
+
+
 def connect(url: str | None = None):
     from dotenv import load_dotenv
     load_dotenv()

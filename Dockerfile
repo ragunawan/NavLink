@@ -11,6 +11,7 @@ ENV PYTHONPATH=/app/backend NAVYLINK_DB=/app/data/navylink.db NAVYLINK_FRONTEND=
 COPY backend/requirements.txt /app/backend/requirements.txt
 RUN pip install --no-cache-dir -r backend/requirements.txt && useradd --create-home --uid 10001 navylink && mkdir /app/data && chown navylink:navylink /app/data
 COPY backend/ /app/backend/
+COPY data/sample/ /app/sample/
 COPY --from=frontend /build/frontend/dist /app/frontend/dist
 USER navylink
 EXPOSE 8000

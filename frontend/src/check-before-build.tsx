@@ -7,7 +7,7 @@ import {AutoTag} from './components/auto-tag'
 import {Button} from './components/button'
 import {ProjectComparison} from './components/project-comparison'
 
-const domains=['Financial management','Logistics','Readiness','Maintenance','Personnel','Acquisition','Cybersecurity']
+const domains=['Financial management','Logistics','Readiness','Maintenance','Personnel','Acquisition','Cybersecurity','Other']
 const maintenance='We plan to build an AI-powered predictive maintenance system that analyzes historical equipment failures and supply data to forecast maintenance needs.'
 const financial='Build a financial dashboard to track budget execution, obligations and expenditures across funding lines.'
 const terms=(s:string)=>s.split(',').map(x=>x.trim()).filter(Boolean)

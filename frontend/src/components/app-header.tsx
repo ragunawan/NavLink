@@ -30,6 +30,7 @@ export function AppHeader({user, identities, selectedCount, onIdentityChange}:{
         <NavLink to="/catalog">Discover capabilities</NavLink>
         <NavLink to="/check">Check before you build</NavLink>
         <NavLink to="/assistant">Discovery assistant</NavLink>
+        <NavLink to="/people">People & data</NavLink>
         <NavLink to="/compare" className="nav-compare"><GitCompareArrows size={16} aria-hidden="true"/>Compare{selectedCount>0&&<span>{selectedCount}</span>}</NavLink>
         <NavLink to="/projects/new" className="nav-register"><Plus size={15} aria-hidden="true"/>Register project</NavLink>
       </nav>

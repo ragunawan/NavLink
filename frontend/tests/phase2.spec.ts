@@ -1,10 +1,10 @@
 import {expect,test} from '@playwright/test'
 
-test('description-only proposal, reviewed auto-tags, collaboration and real relationships',async({page})=>{
+test('description-only proposal, reviewed metadata suggestions, collaboration and real relationships',async({page})=>{
   await page.goto('/check')
   await page.getByLabel('Proposed project name',{exact:false}).fill('Fictional Phase 2 Readiness')
   await page.getByLabel('Project description',{exact:false}).fill('Build a Python predictive maintenance platform using Maintenance work orders and Supply inventory to forecast equipment failures and readiness.')
-  await page.getByRole('button',{name:'Auto-Tag',exact:true}).click()
+  await page.getByRole('button',{name:'Suggest metadata',exact:true}).click()
   await expect(page.getByLabel('Suggested domain')).toHaveValue('Maintenance')
   await expect(page.getByRole('button',{name:'Apply reviewed suggestions'})).toBeDisabled()
   await page.getByLabel('Suggested technologies').fill('Python, React')
@@ -45,7 +45,7 @@ test('assistant answers, citations and two-project comparison work with external
   await page.screenshot({path:'../docs/assistant.png',fullPage:true})
 })
 
-test('RAG identity changes remove restricted evidence and stale auto-tags need review',async({page})=>{
+test('RAG identity changes remove restricted evidence and stale suggestions need review',async({page})=>{
   await page.goto('/assistant')
   await page.getByLabel('Demo identity').selectOption('maintainer')
   await page.getByLabel('Your discovery question').fill('Describe Acoustic Health Kit')
@@ -58,7 +58,7 @@ test('RAG identity changes remove restricted evidence and stale auto-tags need r
   await expect(page.getByRole('region',{name:'Grounded assistant answer'})).not.toContainText('Acoustic Health Kit')
   await page.goto('/check')
   await page.getByLabel('Project description',{exact:false}).fill('Build a financial dashboard with Python and budget execution ledger data.')
-  await page.getByRole('button',{name:'Auto-Tag',exact:true}).click()
+  await page.getByRole('button',{name:'Suggest metadata',exact:true}).click()
   await page.getByLabel('I reviewed these editable suggestions').check()
   await page.getByLabel('Project description',{exact:false}).fill('Build a different maintenance planning application using equipment failure data.')
   await expect(page.getByRole('button',{name:'Apply reviewed suggestions'})).toBeDisabled()

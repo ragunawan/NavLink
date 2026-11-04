@@ -9,7 +9,7 @@ from .rag_schemas import DiscoveryAnswer, ModelAnswer
 from .schemas import DOMAINS, STATUSES
 from .search import search
 
-FIELDS = ("name", "mission_problem", "description", "organization", "domain", "project_type", "status", "datasets", "technologies", "intended_users", "contacts", "access_instructions", "license", "deployment", "integration", "documentation_url")
+FIELDS = ("name", "mission_problem", "description", "organization", "domain", "project_type", "status", "datasets", "technologies", "intended_users", "contacts", "access_instructions", "license", "deployment", "integration", "documentation_url", "classification", "network_accessibility", "primary_poc_email", "team_members", "sponsors", "project_url", "datasource", "date_created", "last_updated")
 ACTION_TEXT = {
     "investigate_reuse": "Investigate possible reuse with the owner; permission and suitability remain unconfirmed.",
     "contact_owner": "Use an approved listed contact to ask about the capability; no contact has been made.",
@@ -24,7 +24,7 @@ def field_text(value):
     if isinstance(value, list):
         if not value:
             return "None listed in this authorized view"
-        return "; ".join(x if isinstance(x, str) else " | ".join(str(x.get(key, "")) for key in ("name", "method", "description") if x.get(key)) for x in value)
+        return "; ".join(x if isinstance(x, str) else " | ".join(str(x.get(key, "")) for key in ("name", "method", "description", "url") if x.get(key)) for x in value)
     return str(value)
 
 
@@ -78,6 +78,8 @@ def deterministic_selection(question, projects):
         fields = ["mission_problem", "datasets", "organization"]
     if any(term in q for term in ["contact", "poc", "who", "collaborat"]):
         fields = ["mission_problem", "organization", "status", "contacts"]
+    if any(term in q for term in ["classification", "network", "sponsor", "datasource", "created", "project url"]):
+        fields = [field for term, field in [("classification", "classification"), ("network", "network_accessibility"), ("sponsor", "sponsors"), ("datasource", "datasource"), ("created", "date_created"), ("project url", "project_url")] if term in q]
     context = build_context(projects)
     return ModelAnswer.model_validate({
         "claims": [{"project_id": p["project_id"], "field": field, "quote": p["fields"][field]} for p in context for field in fields][:15],

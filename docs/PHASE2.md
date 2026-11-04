@@ -6,10 +6,10 @@ The existing React, FastAPI, SQLAlchemy and SQLite architecture is preserved. Th
 
 - Full proposal contract: proposed name, mission problem or description, domain, intended users, datasets, technology and desired capabilities. Mission/description validation is server-side. Description-only and mission-only requests work.
 - Ranked actual candidates with source citations, matched terms/concepts, shared datasets/technologies/users, domain/status components and explicit differences. Relative scores are evidence indicators, not probabilities. Four advisory relationship labels supplement dataset/collaboration/history lead roles.
-- Related-project ranking uses mission retrieval, datasets, domains, tags, technologies and stated use cases. Comparison includes descriptions, audiences, highlighted identical attributes, differences, access constraints and explicit collaborator-seeking status.
+- Related-project ranking uses mission retrieval, datasets, domains, technologies and stated use cases. Comparison includes descriptions, audiences, highlighted identical attributes, differences, access constraints and explicit collaborator-seeking status.
 - Collaboration section prioritizes Seeking Collaborators and shows owning organizations, approved contact methods, mission opportunities and open questions. It sends no messages or access requests.
 - RAG assistant with authorized hybrid retrieval, stable-ID context, separate generation, locally validated source/field/quote references, structured fallback, source cards, optional two-project comparison and an execution summary.
-- Editable Auto-Tag in registry and proposal forms with review confirmation. Dataset names come from explicitly mentioned authorized names or explicitly quoted names in the user's text; unknown owners, status and contacts are never generated. Changed input invalidates the prior suggestion review.
+- Editable Suggest metadata in registry and proposal forms with review confirmation. Dataset names come from explicitly mentioned authorized names or explicitly quoted names in the user's text; unknown owners, status and contacts are never generated. Changed input invalidates the prior suggestion review.
 - Offline operation with the bundled encoder or cached MiniLM, outbound-socket/browser-network tests, synthetic evaluation, and updated demo instructions.
 
 ## RAG behavior

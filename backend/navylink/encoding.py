@@ -72,7 +72,7 @@ def get_encoder():
 
 def searchable(p: dict) -> str:
     # No contacts, access URLs, visibility groups or private extensions in the vector.
-    return " ".join([p["name"], p["description"], p["mission_problem"], p["domain"], p["project_type"], p["technical_summary"], *p["tags"], *p["technologies"], *p["use_cases"], *[d["name"] + " " + d["description"] for d in p["datasets"]]])
+    return " ".join([p["name"], p["description"], p["mission_problem"], p["domain"], p["project_type"], p["technical_summary"], *p["technologies"], *p["use_cases"], *p.get("sponsors", []), *[d["name"] + " " + d["description"] for d in p["datasets"]]])
 
 
 def lexical_text(p: dict) -> str:

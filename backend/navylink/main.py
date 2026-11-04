@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import date
 from collections import Counter
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -13,13 +14,15 @@ from pydantic import ValidationError
 from sqlalchemy import delete, select, text
 
 from . import advisor
+from .catalog_records import register_catalog_routes, validate_references
 from .rag import answer_question
 from .rag_schemas import DiscoveryAnswer, DiscoveryQuestion
 from .auth import USERS, authorized, present, require_project
 from .database import Project, Run, connect
 from .encoding import get_encoder
+from .migrations import migrate_catalog
 from .registry import save_project
-from .schemas import AgentRun, Assessment, CompareRequest, Comparison, Health, Overview, ProjectInput, ProjectOut, Proposal, SearchResponse
+from .schemas import AgentRun, Assessment, CompareRequest, Comparison, Health, Overview, ProjectCreate, ProjectInput, ProjectOut, ProjectPage, Proposal, SearchResponse
 from .search import filter_projects, related, search
 from .seed import seed
 from .suggestions import SuggestRequest, SuggestResponse, suggest_metadata
@@ -30,6 +33,8 @@ def create_app(db_url=None, auto_seed=True):
 
     @asynccontextmanager
     async def lifespan(app):
+        with factory() as session:
+            migrate_catalog(session)
         if auto_seed:
             with factory() as session:
                 seed(session)
@@ -57,6 +62,7 @@ def create_app(db_url=None, auto_seed=True):
     User = Annotated[object, Depends(identity)]
     Editor = Annotated[object, Depends(editor)]
     prefix = "/api/v1"
+    register_catalog_routes(app, prefix, session_dep, identity, editor)
 
     @app.middleware("http")
     async def private_api_cache(request, call_next):
@@ -86,11 +92,19 @@ def create_app(db_url=None, auto_seed=True):
         return [present(p, user) for p in items[offset:offset + limit]]
 
     @app.post(prefix + "/projects", response_model=ProjectOut, status_code=201)
-    def create(payload: ProjectInput, session: Session, user: Editor):
+    def create(payload: ProjectCreate, session: Session, user: Editor):
+        validate_references(session, payload, user)
+        payload = payload.model_copy(update={"date_created": date.today(), "last_updated": date.today()})
         p = save_project(session, str(uuid4()), payload)
         session.execute(delete(Run))  # Invalidate stored evidence snapshots on catalog mutation.
         session.commit()
         return present(p, user)
+
+    @app.get(prefix + "/projects/page", response_model=ProjectPage)
+    def project_page(session: Session, user: User, domain: str | None = None, organization: str | None = None, project_type: str | None = None, status: str | None = None, limit: int = Query(50, ge=1, le=200), offset: int = Query(0, ge=0)):
+        items = filter_projects(session, user, {"domain": domain, "organization": organization, "project_type": project_type, "status": status})
+        items.sort(key=lambda p: (p.payload["last_updated"], p.id), reverse=True)
+        return {"total": len(items), "items": [present(p, user) for p in items[offset:offset + limit]]}
 
     @app.post(prefix + "/projects/compare", response_model=Comparison)
     @app.post("/api/projects/compare", response_model=Comparison, include_in_schema=False)
@@ -106,10 +120,17 @@ def create_app(db_url=None, auto_seed=True):
     @app.patch(prefix + "/projects/{project_id}", response_model=ProjectOut)
     def update(project_id: str, payload: dict, session: Session, user: Editor):
         p = require_project(session, project_id, user)
+        if "date_created" in payload and payload["date_created"] != p.payload.get("date_created"):
+            raise HTTPException(422, "Date created is maintained by the catalog and cannot be changed")
         try:
             validated = ProjectInput.model_validate({**p.payload, **payload})
         except ValidationError as exc:
             raise HTTPException(422, str(exc)) from exc
+        validate_references(session, validated, user, fields=set(payload))
+        for required_field in ("classification", "network_accessibility", "primary_poc_email"):
+            if p.payload.get(required_field) and not getattr(validated, required_field):
+                raise HTTPException(422, f"{required_field} is required once supplied")
+        validated = validated.model_copy(update={"last_updated": date.today()})
         p = save_project(session, project_id, validated)
         session.execute(delete(Run))
         session.commit()

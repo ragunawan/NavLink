@@ -4,11 +4,13 @@
 
 **Navy Locator for Innovation, Networking, and Knowledge.** A functional local capability discovery and reuse advisor for the November 4–6, 2026 FleetHacker demonstration.
 
-All 56 projects, organizations, people, datasets and resource links are fictional. The application contains no operational Navy information. Default Public visitor can discover 42 records; Catalog curator can discover all 56. Access labels are application demo permissions, not classification markings.
+Projects, organizations, people, datasets and resource links are fictional. The application contains no operational Navy information. The sample catalog contains 500 projects, 176 people and 120 datasources, all publicly discoverable demo records. The separate 56-project regression fixture catalog includes 42 public records and role-restricted examples. Access labels are application demo permissions, not classification markings.
 
 ![NavyLINK overview](docs/dashboard.png)
 
 The homepage provides search with supported filters, live catalog counts, mission-domain and organization directories, and recently updated projects. See the [homepage implementation and verification notes](docs/HOMEPAGE.md).
+
+Project registration also supports the [documented catalog fields](docs/data/README.md), including classification, network accessibility, registered personnel references, sponsors, datasources, and catalog-managed dates. Personnel and datasource registries are available from **People & data**.
 
 ## Run locally
 
@@ -19,29 +21,30 @@ make setup PYTHON=python3.14  # or your installed Python 3.12+
 make run
 ```
 
-Open **http://127.0.0.1:8000**. FastAPI serves the compiled React app and API together. API documentation: **http://127.0.0.1:8000/docs**. SQLite persists in `data/navylink.db`. `make setup` creates `.env` from `.env.example` if absent. On this workspace dependencies, the compiled frontend and seeded database have already been created.
+Open **http://127.0.0.1:8000**. FastAPI serves the compiled React app and API together. API documentation: **http://127.0.0.1:8000/docs**. SQLite persists in `data/navylink.db`. `make setup` creates `.env` from `.env.example` if absent. On this workspace dependencies and the compiled frontend are installed, and the sample catalog is loaded.
 
 For live frontend development, run `make dev-api` and `make dev-ui` in separate terminals, then open http://127.0.0.1:5173. Vite proxies `/api` to the local API. It does not need CORS exposure.
 
 ```sh
 make seed       # initialize only if the catalog is empty
+make sample     # back up SQLite and replace the catalog with data/sample CSVs
 make reset      # DESTRUCTIVE to demo catalog and agent history: restore fictional seed
 make reindex    # rebuild persisted vectors and FTS5 documents after encoder changes
 ```
 
-`make reset` preserves organization/domain lookup rows; visible facets derive exclusively from live authorized projects, so stale lookup rows are not exposed. Stop the server before resetting a demo.
+`make reset` preserves organization/domain lookup rows; visible facets derive exclusively from live authorized projects, so stale lookup rows are not exposed. Stop the server before replacing a demo. See the [sample import and backup instructions](docs/data/README.md#sample-catalog).
 
 ## Implemented workflows
 
 - Persistent registry with create, browse, read, partial update and delete; input validation, domain extensions, datasets, approved contacts, resources and access instructions.
 - Natural-language search with keyword FTS5, local semantic vectors, configurable weighted Reciprocal Rank Fusion, filters applied before ranking, evidence snippets and transparent encoder reporting.
-- Related projects use mission retrieval, datasets, domains, tags, technologies and stated use cases; comparison of two or three projects includes descriptions, intended users and highlighted shared attributes.
+- Related projects use mission retrieval, datasets, domains, technologies and stated use cases; comparison of two or three projects includes descriptions, intended users and highlighted shared attributes.
 - **Check before you build** accepts a proposed name, mission or description, domain, intended users, datasets, technologies and desired capabilities. Only a mission problem or description is required. Five leads display initially, with expansion to all assessed candidates. Registration checks overlap before saving and the detail page can open a prefilled proposal.
 - Bounded deterministic advisor: runs hybrid retrieval, expands related entries, inspects the records, compares overlap, evaluates reuse constraints, and produces a consolidated recommendation with field-level citations. Its real execution timeline streams to the interface with start/end times and durations.
 - Assessments include selectable side-by-side comparison, separate duplicate/dataset/collaboration/complementary paths, and eight reuse checks per candidate. Completed local run URLs can be reloaded; changed record/contact permissions invalidate saved evidence.
 - Dashboard metrics, lifecycle counts, recently updated projects and collaboration leads calculated from authorized records.
 - **Discovery assistant** at `/assistant` answers questions using up to five authorized records, exact field citations, next steps, limitations and an execution summary. It supports optional configured OpenAI-compatible/Ollama generation and automatically falls back to structured deterministic answers.
-- **Auto-Tag** in registration and the proposal form suggests editable metadata. Applying suggestions requires explicit review; stale suggestions must be refreshed. It never assigns owners, status, POCs or access permissions.
+- **Suggest metadata** in registration and the proposal form suggests editable metadata. Applying suggestions requires explicit review; stale suggestions must be refreshed. It never assigns owners, status, POCs or access permissions.
 - Responsive React interface with local shadcn-style Button, Tailwind, Lucide, React Router and TanStack Query. No remote fonts, scripts or image dependencies.
 
 ## Search and overlap decisions
@@ -70,7 +73,7 @@ Recommendations cite the exact authorized catalog field and value supporting a s
 
 Phase 2 adds advisory relationships: **Potential Duplicate**, **Strongly Related**, **Complementary**, and **Weakly Related**. Mission evidence, domain, exact dataset/user/technology matches, deliverable type and status contribute to classification or relative ordering; similarity is never a duplicate probability. Different stated audiences downgrade a potential duplicate to a related lead; a proposed dataset can complement an application with a different deliverable. See [Phase 2 implementation and provider setup](docs/PHASE2.md).
 
-Existing JSON catalog records remain intact when upgrading. Missing intended-user metadata displays as unknown. New seed fixtures include fictional intended users; use `make reset` only if you intend to replace the demo data. Older saved assessments expire as the response contract changes. `make reindex` refreshes persistent FTS documents; lexical queries build their current authorized index dynamically.
+Existing JSON catalog records keep their supported metadata when upgrading; the removed File(s) and Keywords fields are migrated out of storage and retrieval indexes. Missing intended-user metadata displays as unknown. New seed fixtures include fictional intended users; use `make reset` only if you intend to replace the demo data. Older saved assessments expire as the response contract changes. `make reindex` refreshes persistent FTS documents; lexical queries build their current authorized index dynamically.
 
 ## Demo identities and permissions
 
@@ -94,8 +97,16 @@ There are no export or relationship-graph endpoints in this milestone. A product
 ```sh
 make test      # backend tests + TypeScript and production frontend build
 make evaluate  # separate temporary seeded DB; writes docs/evaluation.json
-# With make run active:
-npm --prefix frontend test
+# Against the sample catalog running on port 8000:
+NAVYLINK_SAMPLE_TEST=1 npm --prefix frontend test -- sample-import.spec.ts
+```
+
+The remaining browser journeys use the 56-project regression fixtures. Start an isolated server with a fresh temporary database in another terminal, then run them against port 8013:
+
+```sh
+NAVYLINK_DB="$(mktemp -d)/navylink.db" PYTHONPATH=backend .venv/bin/python -m uvicorn navylink.main:app --host 127.0.0.1 --port 8013
+# In another terminal:
+NAVYLINK_TEST_URL=http://127.0.0.1:8013 npm --prefix frontend test
 ```
 
 Browser tests require a local Chromium installation: run `cd frontend && npx playwright install chromium` during online setup if needed. GitHub Actions installs it and runs the backend, build, evaluation and browser suite. CI configuration is provided; a hosted CI run has not been observed from this workspace.

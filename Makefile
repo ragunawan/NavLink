@@ -2,7 +2,7 @@ PYTHON ?= python3
 VENV_PY = .venv/bin/python
 export PYTHONPATH := backend
 
-.PHONY: setup build run dev-api dev-ui seed reset test evaluate model reindex
+.PHONY: setup build run dev-api dev-ui seed reset sample test evaluate model reindex
 setup:
 	$(PYTHON) -m venv .venv
 	test -f .env || cp .env.example .env
@@ -21,6 +21,8 @@ seed:
 	$(VENV_PY) -m navylink.seed
 reset:
 	$(VENV_PY) -m navylink.seed --reset
+sample:
+	$(VENV_PY) -m navylink.import_sample --replace
 test:
 	$(VENV_PY) -m pytest backend/tests -q
 	$(MAKE) build

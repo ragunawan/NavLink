@@ -19,7 +19,7 @@ Second scenario: Check before you build → Financial management example → Ana
 
 Optional follow-up: open Discovery assistant, choose “Are there any financial management dashboards?” and ask the catalog. Show exact catalog fields, local project citations, next steps, uncertainty and the “Deterministic · no LLM used” label. Ask for differences between Keel Prognostics and BearingWatch to show its comparison. The default does not require an LLM; unavailable configured providers also fall back.
 
-Optional metadata demonstration: paste a fictional description into proposal or registry, click Auto-Tag, edit a suggestion, check “I reviewed these editable suggestions,” then apply it. No record is written by Auto-Tag. Editing the description makes the prior suggestions stale.
+Optional metadata demonstration: paste a fictional description into proposal or registry, click Suggest metadata, edit a suggestion, check “I reviewed these editable suggestions,” then apply it. No record is written by Suggest metadata. Editing the description makes the prior suggestions stale.
 
 Permission demonstration: `/projects/maint-07` returns the same not-found response as an unknown record for Public visitor. Switch to Maintenance group to see the fictional Acoustic Health Kit. Switch back to remove it. An internal analyst cannot see group-only projects. Catalog curator is needed to create, edit or delete records.
 

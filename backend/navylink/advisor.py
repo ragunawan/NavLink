@@ -75,16 +75,15 @@ def evaluate_constraints(project, proposal):
 def compare(session, user, ids):
     projects = [present(require_project(session, i, user), user) for i in ids]
     shared = sorted(set.intersection(*[{d["name"] for d in p["datasets"]} for p in projects]))
-    shared_tags = sorted(set.intersection(*[set(p["tags"]) for p in projects]))
     shared_tech = sorted(set.intersection(*[set(p["technologies"]) for p in projects]))
     shared_users = sorted(set.intersection(*[set(p.get("intended_users", [])) for p in projects]))
     return {
-        "projects": projects, "shared_datasets": shared, "shared_tags": shared_tags,
-        "potential_overlap": "Shared catalog datasets and mission tags suggest overlap requiring human review." if shared or shared_tags else "No shared dataset names or tags are stated; assess mission descriptions manually.",
+        "projects": projects, "shared_datasets": shared,
+        "potential_overlap": "Shared catalog datasets suggest overlap requiring human review." if shared else "No shared dataset names are stated; assess mission descriptions manually.",
         "differences": [f"{p['name']}: {p['project_type']}; {p['status']}; {', '.join(p['technologies'])}; {p['organization']}" for p in projects],
         "open_questions": list(dict.fromkeys(q for p in projects for q in open_questions(p))),
         "shared_technologies": shared_tech, "shared_intended_users": shared_users,
-        "similarities": [f"Shared {label}: {', '.join(values)}" for label, values in [("datasets", shared), ("technologies", shared_tech), ("intended users", shared_users), ("tags", shared_tags)] if values],
+        "similarities": [f"Shared {label}: {', '.join(values)}" for label, values in [("datasets", shared), ("technologies", shared_tech), ("intended users", shared_users)] if values],
         "collaboration_opportunities": [f"{p['name']} is seeking collaborators; discuss its stated mission with {p['organization']}." for p in projects if p["status"] == "Seeking Collaborators"],
     }
 
