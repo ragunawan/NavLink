@@ -17,6 +17,7 @@ import {projectTypes as types, projectStatuses as statuses} from './catalog-filt
 import {ProjectMetadata} from './components/project-metadata'
 import {RegistryEditor} from './components/registry-editor'
 import {RecordDirectory} from './components/record-directory'
+import {CatalogChatBubble} from './components/catalog-chat-bubble'
 import './data-fields.css'
 
 const PROJECT_MOTTO = 'Create once, discover everywhere, improve together.'
@@ -123,6 +124,7 @@ function App() {
     </Routes>
    </main>
    <footer className="portal-footer"><div><Link to="/" className="footer-brand">NavyLINK</Link><span>{PROJECT_MOTTO}</span></div><div><span className="footer-demo"><Database size={13} aria-hidden="true"/>Synthetic demonstration data</span><span>Demo identity is not production authentication</span></div></footer>
+   <CatalogChatBubble user={user}/>
    {selected.length>0&&<div className="comparison-tray"><GitCompareArrows size={18}/><strong>{selected.length} of 3 selected</strong><Link to="/compare">Compare capabilities <ArrowRight size={15}/></Link><button aria-label="Clear comparison" onClick={()=>setSelected([])}><X size={17}/></button></div>}
   </div>
  </AppContext.Provider>

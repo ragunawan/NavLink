@@ -15,6 +15,7 @@ from sqlalchemy import delete, select, text
 
 from . import advisor
 from .catalog_records import register_catalog_routes, validate_references
+from .catalog_chat import CatalogChatRequest, CatalogChatResponse, answer_catalog_chat
 from .rag import answer_question
 from .rag_schemas import DiscoveryAnswer, DiscoveryQuestion
 from .auth import USERS, authorized, present, require_project
@@ -165,6 +166,10 @@ def create_app(db_url=None, auto_seed=True):
         if isinstance(payload, DiscoveryQuestion):
             return answer_question(session, user, payload)
         return advisor.discover(session, user, payload)
+
+    @app.post(prefix + "/chat/catalog", response_model=CatalogChatResponse)
+    def catalog_chat(payload: CatalogChatRequest, session: Session, user: User):
+        return answer_catalog_chat(session, user, payload)
 
     @app.post(prefix + "/agent/discover/stream")
     def discover_stream(payload: Proposal, session: Session, user: User):
