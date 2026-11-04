@@ -1,0 +1,16 @@
+import pytest
+from fastapi.testclient import TestClient
+
+from navylink.main import create_app
+
+
+@pytest.fixture
+def client(tmp_path):
+    app = create_app(f"sqlite:///{tmp_path / 'test.db'}")
+    with TestClient(app) as c:
+        yield c
+
+
+@pytest.fixture
+def curator():
+    return {"X-Demo-User": "curator"}

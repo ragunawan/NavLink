@@ -1,0 +1,614 @@
+{
+  "environment": {
+    "platform": "macOS-27.2-arm64-arm-64bit-Mach-O",
+    "python": "3.14.10",
+    "encoder": "bundled-concept-v1 (local baseline)",
+    "catalog_records": 56,
+    "identity": "curator",
+    "note": "In-process TestClient; no HTTP transport or browser time. Synthetic labels, not an independent real-world benchmark."
+  },
+  "summary": {
+    "queries": 15,
+    "precision_at_5": 0.3733,
+    "recall_at_5": 0.9556,
+    "mrr": 0.9667,
+    "duplicate_precision": 1.0,
+    "duplicate_recall": 1.0,
+    "duplicate_tp_fp_fn": [
+      12,
+      0,
+      0
+    ],
+    "complementary_lead_recall": 1.0,
+    "workflow_success_rate": 1.0,
+    "permission_checks_passed": 6,
+    "permission_checks_total": 6,
+    "similar_pairs_in_top_6": 10,
+    "unrelated_pairs_in_top_6": 0,
+    "search_latency_median_ms": 2.08,
+    "search_latency_max_ms": 4.64,
+    "startup_and_seed_ms": 74.22,
+    "process_peak_rss_mib": 102.12,
+    "citations_checked": 902,
+    "citations_valid": 902,
+    "proposal_cases": 10,
+    "near_duplicate_proposals": 5,
+    "complementary_or_nonduplicate_proposals": 5,
+    "search_latency_average_ms": 2.21,
+    "candidates_with_complete_constraints": 45,
+    "candidates_checked": 45,
+    "workflow_latency_median_ms": 24.59,
+    "workflow_latency_max_ms": 27.21
+  },
+  "queries": [
+    {
+      "query": "Predict equipment failures from maintenance work orders and supply inventory",
+      "relevant": [
+        "maint-01",
+        "maint-02",
+        "maint-03",
+        "ready-01",
+        "ready-02",
+        "log-01"
+      ],
+      "returned": [
+        "maint-01",
+        "log-01",
+        "log-02",
+        "ready-01",
+        "ready-02"
+      ],
+      "precision_at_5": 0.8,
+      "recall_at_5": 0.6667
+    },
+    {
+      "query": "Budget execution dashboards",
+      "relevant": [
+        "fin-01",
+        "fin-02",
+        "fin-08"
+      ],
+      "returned": [
+        "fin-01",
+        "fin-02",
+        "fin-08",
+        "fin-03",
+        "fin-05"
+      ],
+      "precision_at_5": 0.6,
+      "recall_at_5": 1.0
+    },
+    {
+      "query": "Financial datasets",
+      "relevant": [
+        "fin-03"
+      ],
+      "returned": [
+        "fin-03",
+        "fin-05",
+        "fin-07",
+        "fin-06",
+        "fin-01"
+      ],
+      "precision_at_5": 0.2,
+      "recall_at_5": 1.0
+    },
+    {
+      "query": "Applications that automate acquisition reporting",
+      "relevant": [
+        "acq-01",
+        "acq-02",
+        "acq-04"
+      ],
+      "returned": [
+        "acq-01",
+        "acq-02",
+        "acq-08",
+        "acq-04",
+        "ready-05"
+      ],
+      "precision_at_5": 0.6,
+      "recall_at_5": 1.0
+    },
+    {
+      "query": "Cybersecurity analytics systems for vulnerability remediation",
+      "relevant": [
+        "cyber-01",
+        "cyber-02",
+        "cyber-04"
+      ],
+      "returned": [
+        "cyber-01",
+        "cyber-03",
+        "cyber-08",
+        "cyber-02",
+        "cyber-07"
+      ],
+      "precision_at_5": 0.4,
+      "recall_at_5": 0.6667
+    },
+    {
+      "query": "Forecast spare parts inventory shortages",
+      "relevant": [
+        "log-01",
+        "log-02"
+      ],
+      "returned": [
+        "log-02",
+        "log-01",
+        "log-03",
+        "ready-02",
+        "maint-01"
+      ],
+      "precision_at_5": 0.4,
+      "recall_at_5": 1.0
+    },
+    {
+      "query": "Find workforce staffing gaps and training qualifications",
+      "relevant": [
+        "people-01",
+        "people-02",
+        "people-03",
+        "people-04"
+      ],
+      "returned": [
+        "people-01",
+        "people-02",
+        "people-03",
+        "people-08",
+        "people-04"
+      ],
+      "precision_at_5": 0.8,
+      "recall_at_5": 1.0
+    },
+    {
+      "query": "Automate cleaning maintenance work orders",
+      "relevant": [
+        "maint-04"
+      ],
+      "returned": [
+        "maint-04",
+        "maint-08",
+        "cyber-04",
+        "maint-03",
+        "maint-06"
+      ],
+      "precision_at_5": 0.2,
+      "recall_at_5": 1.0
+    },
+    {
+      "query": "Hull corrosion inspection and coating repair",
+      "relevant": [
+        "maint-05"
+      ],
+      "returned": [
+        "maint-05",
+        "maint-08",
+        "maint-04",
+        "maint-06",
+        "ready-01"
+      ],
+      "precision_at_5": 0.2,
+      "recall_at_5": 1.0
+    },
+    {
+      "query": "Coordinate exercise readiness assessment schedules",
+      "relevant": [
+        "ready-04"
+      ],
+      "returned": [
+        "ready-04",
+        "ready-08",
+        "ready-03",
+        "ready-07",
+        "ready-01"
+      ],
+      "precision_at_5": 0.2,
+      "recall_at_5": 1.0
+    },
+    {
+      "query": "Automate invoice matching procurement receipts",
+      "relevant": [
+        "fin-04",
+        "log-05"
+      ],
+      "returned": [
+        "acq-02",
+        "fin-04",
+        "acq-01",
+        "log-05",
+        "acq-05"
+      ],
+      "precision_at_5": 0.4,
+      "recall_at_5": 1.0
+    },
+    {
+      "query": "Optimize cargo transfer shipment routes",
+      "relevant": [
+        "log-04"
+      ],
+      "returned": [
+        "log-04",
+        "log-08"
+      ],
+      "precision_at_5": 0.2,
+      "recall_at_5": 1.0
+    },
+    {
+      "query": "Analyze supplier lead time replenishment delays",
+      "relevant": [
+        "log-07"
+      ],
+      "returned": [
+        "log-07",
+        "people-07",
+        "acq-06",
+        "acq-05",
+        "fin-05"
+      ],
+      "precision_at_5": 0.2,
+      "recall_at_5": 1.0
+    },
+    {
+      "query": "Analyze administrative workload staffing capacity",
+      "relevant": [
+        "people-07"
+      ],
+      "returned": [
+        "people-07",
+        "people-02",
+        "people-01",
+        "people-05",
+        "people-03"
+      ],
+      "precision_at_5": 0.2,
+      "recall_at_5": 1.0
+    },
+    {
+      "query": "Detect unusual network traffic in fabricated flow records",
+      "relevant": [
+        "cyber-06"
+      ],
+      "returned": [
+        "cyber-06",
+        "maint-07",
+        "maint-03",
+        "cyber-08",
+        "cyber-03"
+      ],
+      "precision_at_5": 0.2,
+      "recall_at_5": 1.0
+    }
+  ],
+  "proposals": [
+    {
+      "description": "Build a predictive maintenance platform to forecast ship equipment failures and readiness from historical maintenance work orders and supply data.",
+      "expected_duplicates": [
+        "maint-01",
+        "maint-02",
+        "ready-01",
+        "ready-02"
+      ],
+      "predicted_duplicates": [
+        "maint-01",
+        "maint-02",
+        "ready-01",
+        "ready-02"
+      ],
+      "decision": "investigate_reuse",
+      "candidate_ids": [
+        "maint-01",
+        "ready-01",
+        "ready-02",
+        "maint-02",
+        "maint-03",
+        "log-03",
+        "maint-04",
+        "log-01"
+      ],
+      "all_citations_valid": true
+    },
+    {
+      "description": "Build a financial dashboard to track budget execution obligations and expenditures across funding lines.",
+      "expected_duplicates": [
+        "fin-01",
+        "fin-02"
+      ],
+      "predicted_duplicates": [
+        "fin-01",
+        "fin-02"
+      ],
+      "decision": "investigate_reuse",
+      "candidate_ids": [
+        "fin-01",
+        "fin-02",
+        "fin-03",
+        "fin-04",
+        "fin-08"
+      ],
+      "all_citations_valid": true
+    },
+    {
+      "description": "Automate acquisition contract milestone reporting and procurement review submissions.",
+      "expected_duplicates": [
+        "acq-01",
+        "acq-02"
+      ],
+      "predicted_duplicates": [
+        "acq-01",
+        "acq-02"
+      ],
+      "decision": "investigate_reuse",
+      "candidate_ids": [
+        "acq-02",
+        "acq-01",
+        "acq-03",
+        "acq-04",
+        "fin-04",
+        "acq-08"
+      ],
+      "all_citations_valid": true
+    },
+    {
+      "description": "Forecast personnel staffing gaps by matching workforce billet requirements to training qualifications.",
+      "expected_duplicates": [
+        "people-01",
+        "people-02"
+      ],
+      "predicted_duplicates": [
+        "people-01",
+        "people-02"
+      ],
+      "decision": "investigate_reuse",
+      "candidate_ids": [
+        "people-01",
+        "people-02",
+        "people-03",
+        "people-04",
+        "people-06",
+        "people-08"
+      ],
+      "all_citations_valid": true
+    },
+    {
+      "description": "Design a marble sculpture exhibition featuring underwater portraits and coral art installations.",
+      "expected_duplicates": [],
+      "predicted_duplicates": [],
+      "decision": "continue_discovery",
+      "candidate_ids": [],
+      "all_citations_valid": true
+    },
+    {
+      "description": "Prioritize cybersecurity vulnerabilities and threat exposure using asset scans and remediation logs.",
+      "expected_duplicates": [
+        "cyber-01",
+        "cyber-02"
+      ],
+      "predicted_duplicates": [
+        "cyber-01",
+        "cyber-02"
+      ],
+      "decision": "investigate_reuse",
+      "candidate_ids": [
+        "cyber-01",
+        "cyber-02",
+        "cyber-03",
+        "cyber-06",
+        "maint-02",
+        "cyber-08"
+      ],
+      "all_citations_valid": true
+    },
+    {
+      "description": "Publish historical maintenance work orders and equipment failure records as a dataset.",
+      "expected_duplicates": [],
+      "predicted_duplicates": [],
+      "decision": "explore_collaboration",
+      "candidate_ids": [
+        "maint-03",
+        "maint-02",
+        "maint-01",
+        "ready-01",
+        "ready-02",
+        "maint-04",
+        "maint-06",
+        "maint-08"
+      ],
+      "all_citations_valid": true
+    },
+    {
+      "description": "Publish fictional travel claim fixtures for later financial analytics experiments.",
+      "expected_duplicates": [],
+      "predicted_duplicates": [],
+      "decision": "explore_collaboration",
+      "candidate_ids": [
+        "fin-03",
+        "fin-05"
+      ],
+      "all_citations_valid": true
+    },
+    {
+      "description": "Share fictional contract milestone data for external visualization experiments.",
+      "expected_duplicates": [],
+      "predicted_duplicates": [],
+      "decision": "explore_collaboration",
+      "candidate_ids": [
+        "acq-03",
+        "acq-02",
+        "acq-01",
+        "acq-08"
+      ],
+      "all_citations_valid": true
+    },
+    {
+      "description": "Build an image gallery for coral restoration photography and ceramic art installations.",
+      "expected_duplicates": [],
+      "predicted_duplicates": [],
+      "decision": "continue_discovery",
+      "candidate_ids": [],
+      "all_citations_valid": true
+    }
+  ],
+  "pairs": [
+    {
+      "pair": [
+        "maint-01",
+        "maint-02"
+      ],
+      "known_similar": true,
+      "in_related_top_6": true
+    },
+    {
+      "pair": [
+        "fin-01",
+        "fin-02"
+      ],
+      "known_similar": true,
+      "in_related_top_6": true
+    },
+    {
+      "pair": [
+        "log-01",
+        "log-02"
+      ],
+      "known_similar": true,
+      "in_related_top_6": true
+    },
+    {
+      "pair": [
+        "ready-01",
+        "ready-02"
+      ],
+      "known_similar": true,
+      "in_related_top_6": true
+    },
+    {
+      "pair": [
+        "people-01",
+        "people-02"
+      ],
+      "known_similar": true,
+      "in_related_top_6": true
+    },
+    {
+      "pair": [
+        "acq-01",
+        "acq-02"
+      ],
+      "known_similar": true,
+      "in_related_top_6": true
+    },
+    {
+      "pair": [
+        "cyber-01",
+        "cyber-02"
+      ],
+      "known_similar": true,
+      "in_related_top_6": true
+    },
+    {
+      "pair": [
+        "maint-01",
+        "ready-01"
+      ],
+      "known_similar": true,
+      "in_related_top_6": true
+    },
+    {
+      "pair": [
+        "fin-01",
+        "fin-03"
+      ],
+      "known_similar": true,
+      "in_related_top_6": true
+    },
+    {
+      "pair": [
+        "maint-01",
+        "maint-03"
+      ],
+      "known_similar": true,
+      "in_related_top_6": true
+    },
+    {
+      "pair": [
+        "maint-01",
+        "people-05"
+      ],
+      "known_similar": false,
+      "in_related_top_6": false
+    },
+    {
+      "pair": [
+        "fin-01",
+        "cyber-06"
+      ],
+      "known_similar": false,
+      "in_related_top_6": false
+    },
+    {
+      "pair": [
+        "log-04",
+        "people-04"
+      ],
+      "known_similar": false,
+      "in_related_top_6": false
+    },
+    {
+      "pair": [
+        "ready-04",
+        "fin-04"
+      ],
+      "known_similar": false,
+      "in_related_top_6": false
+    },
+    {
+      "pair": [
+        "people-01",
+        "cyber-02"
+      ],
+      "known_similar": false,
+      "in_related_top_6": false
+    },
+    {
+      "pair": [
+        "acq-01",
+        "maint-05"
+      ],
+      "known_similar": false,
+      "in_related_top_6": false
+    },
+    {
+      "pair": [
+        "cyber-01",
+        "log-06"
+      ],
+      "known_similar": false,
+      "in_related_top_6": false
+    },
+    {
+      "pair": [
+        "fin-05",
+        "maint-07"
+      ],
+      "known_similar": false,
+      "in_related_top_6": false
+    },
+    {
+      "pair": [
+        "log-07",
+        "ready-04"
+      ],
+      "known_similar": false,
+      "in_related_top_6": false
+    },
+    {
+      "pair": [
+        "people-07",
+        "cyber-03"
+      ],
+      "known_similar": false,
+      "in_related_top_6": false
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+import {useState} from 'react'
+import {Link} from 'react-router-dom'
+import {useMutation} from '@tanstack/react-query'
+import {ArrowRight, ArrowUpRight, BookOpen, CheckCircle2, LoaderCircle, MessageSquare, ShieldCheck} from 'lucide-react'
+import {api, type Activity, type Citation, type Comparison, type Project} from './api'
+import {Button} from './components/button'
+import {ProjectComparison} from './components/project-comparison'
+
+type Answer={id:string;question:string;answer:string;facts:{text:string;citation:Citation;provenance:string}[];citations:Citation[];referenced_project_ids:string[];retrieved_projects:Project[];recommendations:{action:string;reason:string;citations:Citation[]}[];uncertainty:string[];execution_steps:Activity[];generation_mode:'llm'|'deterministic';generation_detail:string;encoder:string;comparison:Comparison|null}
+const examples=['Which organizations have predictive maintenance capabilities?','Are there any financial management dashboards?','What tools use historical maintenance datasets?','Which projects are seeking collaborators?','What are the differences between Keel Prognostics and BearingWatch?']
+
+export function DiscoveryAssistant({user}:{user:string}) {
+  const [question,setQuestion]=useState(''),[localOnly,setLocalOnly]=useState(false)
+  const mutation=useMutation({mutationFn:()=>api<Answer>('/agent/discover',user,{method:'POST',body:JSON.stringify({question,generation:localOnly?'deterministic':'auto'})})})
+  const answer=mutation.data
+  return <>
+    <div className="page-title"><div><div className="eyebrow">ASK THE SHARED CATALOG</div><h1>Discovery assistant</h1><p>Ask a question. Inspect the authorized evidence. Follow the sources.</p></div><span className="local-pill"><ShieldCheck size={15}/>Offline fallback ready</span></div>
+    <section className="panel assistant-question"><form onSubmit={e=>{e.preventDefault();mutation.mutate()}}><label>Your discovery question<textarea aria-label="Your discovery question" required minLength={5} maxLength={3000} rows={3} placeholder="Which organizations have predictive maintenance capabilities?" value={question} onChange={e=>{setQuestion(e.target.value);mutation.reset()}}/></label><div className="assistant-controls"><label className="checkbox-label"><input type="checkbox" checked={localOnly} onChange={e=>setLocalOnly(e.target.checked)}/>Use deterministic answers only</label><Button disabled={mutation.isPending} type="submit">{mutation.isPending?<LoaderCircle className="spin" size={17}/>:<MessageSquare size={17}/>}Ask the catalog <ArrowRight size={16}/></Button></div></form><div className="assistant-examples">{examples.map(example=><button key={example} onClick={()=>{setQuestion(example);mutation.reset()}}>{example}</button>)}</div></section>
+    {mutation.isPending&&<div className="loading" role="status"><LoaderCircle className="spin" size={22}/>Retrieving authorized evidence and validating the answer…</div>}
+    {mutation.error&&<div className="error" role="alert">{mutation.error.message}</div>}
+    {answer&&<section className="assistant-answer" aria-label="Grounded assistant answer"><div className="section-title"><div><span className="eyebrow">SOURCE-BOUND DISCOVERY</span><h2>What the catalog supports</h2></div><span className="generation-badge">{answer.generation_mode==='llm'?'LLM-assisted · exact evidence validated':'Deterministic · no LLM used'}</span></div><p className="fine-print">{answer.generation_detail}</p>
+      {answer.facts.length?<div className="panel answer-facts">{answer.facts.map((fact,i)=><article key={i}><span className="fact-type">CONFIRMED CATALOG FIELD</span><p>{fact.text}</p><Link to={fact.citation.url}>{fact.citation.project_name} · {fact.citation.field.replaceAll('_',' ')}<ArrowUpRight size={13}/></Link></article>)}</div>:<div className="empty"><BookOpen size={30}/><p>{answer.answer}</p></div>}
+      {answer.comparison&&<section className="panel inline-comparison"><h2>Comparison of retrieved projects</h2><ProjectComparison comparison={answer.comparison}/></section>}
+      <div className="dashboard-columns assistant-bottom"><section className="panel"><h2>Advisory next steps</h2><p className="fine-print">Recommendations require your review; they do not grant reuse or access.</p>{answer.recommendations.map((r,i)=><article className="assistant-action" key={i}><strong>{r.action}</strong><p>{r.reason}</p><div className="source-links">{[...new Map(r.citations.map(c=>[c.project_id,c])).values()].map(c=><Link key={c.project_id} to={c.url}>{c.project_name}<ArrowUpRight size={12}/></Link>)}</div></article>)}</section><section className="panel"><h2>Unknowns and coverage</h2><ul>{answer.uncertainty.map(u=><li key={u}>{u}</li>)}</ul><details><summary>Execution summary</summary><ol className="timeline">{answer.execution_steps.map(step=><li key={step.step}><CheckCircle2 size={15}/><div><strong>{step.tool.replaceAll('_',' ')}</strong><p>{step.detail}</p><small>{step.elapsed_ms.toFixed(1)} ms · {step.status}</small></div></li>)}</ol></details></section></div>
+      <section className="panel retrieved-sources"><h2>Retrieved project records</h2><p className="fine-print">Only these {answer.retrieved_projects.length} authorized records were supplied as answer evidence.</p>{answer.retrieved_projects.map(p=><Link className="list-row" key={p.id} to={'/projects/'+p.id}><div><strong>{p.name}</strong><small>{p.organization} · {p.status} · {p.domain}</small></div><ArrowUpRight size={17}/></Link>)}</section><p className="fine-print">{answer.encoder} · Retrieval is local. Optional generation uses only the server-configured provider.</p>
+    </section>}
+  </>
+}

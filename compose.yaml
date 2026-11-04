@@ -1,0 +1,18 @@
+services:
+  navylink:
+    build: .
+    image: navylink:demo
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - navylink-data:/app/data
+    environment:
+      NAVYLINK_SEMANTIC_WEIGHT: "0.55"
+      NAVYLINK_LLM_PROVIDER: ${NAVYLINK_LLM_PROVIDER:-none}
+      NAVYLINK_LLM_BASE_URL: ${NAVYLINK_LLM_BASE_URL:-}
+      NAVYLINK_LLM_MODEL: ${NAVYLINK_LLM_MODEL:-}
+      NAVYLINK_LLM_API_KEY: ${NAVYLINK_LLM_API_KEY:-}
+      NAVYLINK_LLM_TIMEOUT: ${NAVYLINK_LLM_TIMEOUT:-5}
+    restart: unless-stopped
+volumes:
+  navylink-data:
