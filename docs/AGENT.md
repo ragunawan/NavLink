@@ -1,5 +1,7 @@
 # Check Before You Build
 
+NavyLINK's motto is **Create once, discover everywhere, improve together.** The advisor supports it by finding existing capabilities, identifying reuse opportunities and connecting complementary work through approved contacts. Discovery stays within each user's authorized catalog view.
+
 The proposal-analysis agent is a finite local workflow with no external LLM calls or action integration. It executes the application search, registry, related-project, comparison and access tools. Recommendations are deterministic inferences from authorized catalog evidence. They are leads for human review, never a permission grant or confirmed reuse decision. The separate question assistant has optional configured generation, described in `PHASE2.md`.
 
 ## Execution

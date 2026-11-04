@@ -36,7 +36,7 @@ def create_app(db_url=None, auto_seed=True):
         yield
         engine.dispose()
 
-    app = FastAPI(title="NavyLINK", version="0.1.0", description="Offline synthetic capability catalog. Demo identities are not authentication.", lifespan=lifespan)
+    app = FastAPI(title="NavyLINK", version="0.1.0", description="Create once, discover everywhere, improve together. Offline synthetic capability catalog. Demo identities are not authentication.", lifespan=lifespan)
     app.state.factory = factory
 
     def session_dep():

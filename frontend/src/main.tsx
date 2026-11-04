@@ -1,29 +1,36 @@
-import React, {createContext, useContext, useState} from 'react'
+import React, {createContext, useContext, useRef, useState} from 'react'
 import {createRoot} from 'react-dom/client'
-import {BrowserRouter, Link, NavLink, Route, Routes, useNavigate, useParams, useSearchParams} from 'react-router-dom'
+import {BrowserRouter, Link, Route, Routes, useLocation, useNavigate, useParams, useSearchParams} from 'react-router-dom'
 import {QueryClient, QueryClientProvider, useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
-import {ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Check, CheckCircle2, ChevronRight, CircleHelp, Compass, Database, GitCompareArrows, Layers3, LayoutDashboard, LoaderCircle, LockKeyhole, Menu, Plus, Radar, Search, ShieldCheck, Sparkles, Users, Workflow, X} from 'lucide-react'
-import {api, type Comparison, type Hit, type Overview, type Project, type SearchResult} from './api'
+import {ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Check, CircleHelp, Database, GitCompareArrows, Layers3, LoaderCircle, LockKeyhole, Plus, Search, ShieldCheck, Sparkles, Users, Workflow, X} from 'lucide-react'
+import {api, type Comparison, type Hit, type Project, type SearchResult} from './api'
 import {AutoTag} from './components/auto-tag'
 import {Button} from './components/button'
 import './styles.css'
+import './homepage.css'
 import {DiscoveryAssistant} from './discovery-assistant'
 import {CheckBeforeBuild} from './check-before-build'
 import {ProjectComparison} from './components/project-comparison'
+import {AppHeader} from './components/app-header'
+import {HomePage} from './components/homepage'
+import {DiscoveryDirectory} from './components/discovery-directory'
+import {projectTypes as types, projectStatuses as statuses} from './catalog-filters'
 
+const PROJECT_MOTTO = 'Create once, discover everywhere, improve together.'
 const queryClient = new QueryClient({defaultOptions:{queries:{retry:1,staleTime:15000,refetchOnWindowFocus:false}}})
 const AppContext = createContext<{user:string;canEdit:boolean;selected:string[];toggle:(id:string)=>void}>({user:'visitor',canEdit:false,selected:[],toggle:()=>{}})
 const useApp = () => useContext(AppContext)
 const domains = ['Financial management','Logistics','Readiness','Maintenance','Personnel','Acquisition','Cybersecurity']
-const types = ['Dataset','Dashboard','Software tool','Automation','Model','Application','Analytics product']
-const statuses = ['Concept','In Development','Operational','Retired','Seeking Collaborators']
 
 function useApi<T>(path:string, enabled=true) {const {user}=useApp();return useQuery({queryKey:[user,path],queryFn:()=>api<T>(path,user),enabled})}
 function ErrorBox({error}:{error:unknown}) {return error ? <div role="alert" className="error">{error instanceof Error ? error.message : 'Unable to load data. Check that the local API is running.'}</div> : null}
 function Loading() {return <div className="loading" role="status"><LoaderCircle size={22} className="spin"/> Loading local catalog…</div>}
 function Status({value}:{value:string}) {return <span className={'status status-'+value.toLowerCase().replaceAll(' ','-')}><span/>{value}</span>}
 function PageTitle({eyebrow,title,description,action}:{eyebrow:string;title:string;description:string;action?:React.ReactNode}) {return <div className="page-title"><div><div className="eyebrow">{eyebrow}</div><h1>{title}</h1><p>{description}</p></div>{action}</div>}
-function SearchBox({initial='',large=false}:{initial?:string;large?:boolean}) {const [value,setValue]=useState(initial);const navigate=useNavigate();return <form className={'searchbox '+(large?'large':'')} onSubmit={e=>{e.preventDefault();if(value.trim())navigate('/catalog?q='+encodeURIComponent(value.trim()))}}><Search size={22}/><input aria-label="Search capabilities" placeholder="Describe a mission need, capability, or dataset…" value={value} onChange={e=>setValue(e.target.value)}/><Button type="submit">Search <ArrowRight size={16}/></Button></form>}
+function SearchBox({initial=''}:{initial?:string}) {
+ const [value,setValue]=useState(initial);const input=useRef<HTMLInputElement>(null);const navigate=useNavigate();const [params]=useSearchParams()
+ return <form className="searchbox" role="search" onSubmit={e=>{e.preventDefault();const next=new URLSearchParams(params);if(value.trim())next.set('q',value.trim());else next.delete('q');navigate('/catalog'+(next.size?'?'+next:''))}}><Search size={22} aria-hidden="true"/><input ref={input} aria-label="Search capabilities" maxLength={3000} placeholder="Describe a mission need, capability, or dataset…" value={value} onChange={e=>setValue(e.target.value)}/>{value&&<button type="button" className="catalog-clear" aria-label="Clear search" onClick={()=>{setValue('');input.current?.focus()}}><X size={18}/></button>}<Button type="submit">Search <ArrowRight size={16}/></Button></form>
+}
 
 function ProjectCard({project:p,hit,compact=false}:{project:Project;hit?:Hit;compact?:boolean}) {
  const {selected,toggle}=useApp()
@@ -38,18 +45,9 @@ function ProjectCard({project:p,hit,compact=false}:{project:Project;hit?:Hit;com
 }
 
 function Dashboard() {
- const {data,error,isPending}=useApi<Overview>('/analytics/overview')
- return <><PageTitle eyebrow="CAPABILITY DISCOVERY" title="Great ideas deserve a head start." description="Find what exists. Connect with the people behind it. Build on shared knowledge." action={<span className="local-pill"><span/> Local discovery ready</span>}/>
- <section className="discovery-hero"><div className="hero-orbit" aria-hidden="true"><Radar/></div><div className="eyebrow">A SHARED PICTURE. A SMARTER START.</div><h2>Your next solution might<br/>already be out there.</h2><p>Explore capabilities across commands with natural-language search.</p><SearchBox large/><div className="try-search"><span>Try a mission need</span><Link to={'/catalog?q='+encodeURIComponent('Predictive maintenance tools')}>Predictive maintenance <ArrowUpRight size={13}/></Link><Link to="/catalog?q=Budget+execution+dashboards">Budget execution <ArrowUpRight size={13}/></Link><Link to="/catalog?q=Cybersecurity+analytics">Cyber analytics <ArrowUpRight size={13}/></Link></div></section>
- <ErrorBox error={error}/>{isPending?<Loading/>:data&&<>
- <div className="metrics"><Metric label="Discoverable capabilities" value={data.total} icon={<Layers3/>} detail="Authorized for your demo identity"/><Metric label="Mission domains" value={Object.keys(data.domains).length} icon={<Compass/>} detail="Connected through a shared catalog"/><Metric label="Operational projects" value={data.statuses.Operational||0} icon={<CheckCircle2/>} detail="Status reported in catalog metadata"/><Metric label="Seeking collaborators" value={data.statuses['Seeking Collaborators']||0} icon={<Users/>} detail="Find an opportunity to contribute"/></div>
- <div className="dashboard-columns"><section className="panel"><div className="section-title"><div><span className="eyebrow">EXPLORE THE LANDSCAPE</span><h2>Capabilities by mission</h2></div><Compass size={20}/></div><div className="domain-list">{Object.entries(data.domains).sort((a,b)=>b[1]-a[1]).map(([domain,count],i)=><Link key={domain} to={'/catalog?domain='+encodeURIComponent(domain)}><span className="domain-num">0{i+1}</span><div><span>{domain}</span><div className="bar-track"><i style={{width:(count/data.total*100)+'%'}}/></div></div><b>{count}</b><ChevronRight size={15}/></Link>)}</div><div className="panel-foot">Counts reflect your authorized catalog view.</div></section>
- <section className="build-callout"><div className="callout-icon"><Workflow size={25}/></div><div className="eyebrow">CHECK BEFORE YOU BUILD</div><h2>Start with a mission.<br/>{' '}Discover a connection.</h2><p>Explore potential duplicates, complementary tools, and relevant datasets before your next project begins.</p><ul><li><Check size={15}/> Evidence linked to catalog records</li><li><Check size={15}/> Clear next steps and open questions</li><li><Check size={15}/> Works locally, without an LLM</li></ul><Button asChild><Link to="/check">Explore your idea <ArrowRight size={17}/></Link></Button><small>The final determination is always yours.</small></section></div>
- <section className="recent-section"><div className="section-title"><div><span className="eyebrow">FROM THE CATALOG</span><h2>Recently updated</h2></div><Link to="/catalog">Browse all capabilities <ArrowRight size={16}/></Link></div><div className="card-grid">{data.recent.slice(0,3).map(p=><ProjectCard key={p.id} project={p} compact/>)}</div></section>
- <div className="dashboard-columns bottom-panels"><section className="panel"><div className="section-title"><h2>Open to collaboration</h2><Users size={20}/></div>{data.collaborators.map(p=><Link className="list-row" key={p.id} to={'/projects/'+p.id}><span className="list-icon"><Workflow size={18}/></span><div><strong>{p.name}</strong><small>{p.domain}</small></div><ArrowUpRight size={17}/></Link>)}</section><section className="panel"><div className="section-title"><h2>Catalog lifecycle</h2><Layers3 size={20}/></div>{Object.entries(data.statuses).map(([status,count])=><Link className="lifecycle" key={status} to={'/catalog?status='+encodeURIComponent(status)}><Status value={status}/><strong>{count}</strong></Link>)}</section></div>
- </>}</>
+ const {user}=useApp()
+ return <HomePage user={user} renderProject={project=><ProjectCard project={project} compact/>}/>
 }
-function Metric({label,value,icon,detail}:{label:string;value:number;icon:React.ReactNode;detail:string}) {return <div className="metric"><div><span>{label}</span>{icon}</div><strong>{String(value).padStart(2,'0')}</strong><small>{detail}</small></div>}
 
 function Catalog() {
  const [params,setParams]=useSearchParams(); const q=params.get('q')||''
@@ -104,11 +102,34 @@ function RegistryEditor({initial}:{initial?:Project}) {
 }
 
 function App() {
- const identities=useQuery({queryKey:['identities'],queryFn:()=>api<{id:string;label:string;editor:boolean}[]>('/identities','visitor')});const [user,setUser]=useState('visitor');const canEdit=identities.data?.find(i=>i.id===user)?.editor??false;const [selected,setSelected]=useState<string[]>([]);const [menu,setMenu]=useState(false)
+ const identities=useQuery({queryKey:['identities'],queryFn:()=>api<{id:string;label:string;editor:boolean}[]>('/identities','visitor')})
+ const [user,setUser]=useState('visitor');const canEdit=identities.data?.find(i=>i.id===user)?.editor??false
+ const [selected,setSelected]=useState<string[]>([])
+ const location=useLocation()
  const toggle=(id:string)=>setSelected(ids=>ids.includes(id)?ids.filter(x=>x!==id):ids.length<3?[...ids,id]:ids)
- return <AppContext.Provider value={{user,canEdit,selected,toggle}}><a className="skip-link" href="#main">Skip to content</a><div className={'app-shell '+(menu?'menu-open':'')}><aside className="sidebar"><Link className="brand" to="/" onClick={()=>setMenu(false)}><span className="brand-icon"><Radar size={27}/></span><div>Navy<span>LINK</span><small>CONNECT CAPABILITY.</small></div></Link><div className="workspace-label">DISCOVERY WORKSPACE</div><nav onClick={()=>setMenu(false)}><NavLink to="/" end><LayoutDashboard size={19}/>Overview</NavLink><NavLink to="/catalog"><Compass size={19}/>Discover capabilities</NavLink><NavLink to="/check"><Workflow size={19}/>Check before you build<span className="nav-new">NEW</span></NavLink><NavLink to="/assistant"><Sparkles size={19}/>Discovery assistant</NavLink><NavLink to="/compare"><GitCompareArrows size={19}/>Compare projects{selected.length>0&&<b>{selected.length}</b>}</NavLink><NavLink to="/projects/new"><Plus size={19}/>Register project</NavLink></nav><div className="sidebar-note"><ShieldCheck size={23}/><strong>Built for disconnected discovery.</strong><p>Local data. Local search.<br/>Shared knowledge, within reach.</p><span><i/> NO CLOUD REQUIRED</span></div><div className="sidebar-footer"><span className="version">N / L</span><div>FleetHacker 2026<small>Norfolk, Virginia · Demo edition</small></div></div></aside>
- <div className="main-shell"><header className="topbar"><div className="breadcrumb"><button aria-label="Toggle navigation" className="mobile-menu" onClick={()=>setMenu(!menu)}><Menu size={22}/></button><span>Workspace</span><ChevronRight size={14}/><strong>Capability discovery</strong></div><div className="header-right"><span className="synthetic-badge"><Database size={13}/>SYNTHETIC DATA</span><label className="identity-label"><span>Demo identity</span><select aria-label="Demo identity" value={user} onChange={e=>{setUser(e.target.value);setSelected([]);queryClient.clear()}}>{identities.data?.map(i=><option key={i.id} value={i.id}>{i.label}</option>)}</select></label></div></header>
- <main id="main" key={user}><Routes><Route path="/" element={<Dashboard/>}/><Route path="/catalog" element={<Catalog/>}/><Route path="/projects/new" element={<RegistryForm/>}/><Route path="/projects/:id/edit" element={<RegistryForm/>}/><Route path="/projects/:id" element={<ProjectDetail/>}/><Route path="/check" element={<CheckBeforeBuild user={user}/>}/><Route path="/assistant" element={<DiscoveryAssistant user={user}/>}/><Route path="/compare" element={<Compare/>}/><Route path="*" element={<div className="empty"><h1>Page not found</h1><Link to="/">Return to overview</Link></div>}/></Routes><footer className="page-footer"><span>NavyLINK · Navy Locator for Innovation, Networking, and Knowledge</span><span>Fictional catalog · Demo identity is not production authentication</span></footer></main>
- {selected.length>0&&<div className="comparison-tray"><GitCompareArrows size={18}/><strong>{selected.length} of 3 selected</strong><Link to="/compare">Compare capabilities <ArrowRight size={15}/></Link><button aria-label="Clear comparison" onClick={()=>setSelected([])}><X size={17}/></button></div>}</div></div></AppContext.Provider>
+ return <AppContext.Provider value={{user,canEdit,selected,toggle}}>
+  <a className="skip-link" href="#main">Skip to content</a>
+  <div className="portal-shell">
+   <AppHeader user={user} identities={identities.data} selectedCount={selected.length} onIdentityChange={value=>{setUser(value);setSelected([]);queryClient.clear()}}/>
+   <main id="main" tabIndex={-1} key={user} className={location.pathname==='/'?'portal-main portal-home':'portal-main'}>
+    <ErrorBox error={identities.error}/>
+    <Routes>
+     <Route path="/" element={<Dashboard/>}/>
+     <Route path="/catalog" element={<Catalog/>}/>
+     <Route path="/domains" element={<DiscoveryDirectory kind="domains" user={user}/>}/>
+     <Route path="/organizations" element={<DiscoveryDirectory kind="organizations" user={user}/>}/>
+     <Route path="/projects/new" element={<RegistryForm/>}/>
+     <Route path="/projects/:id/edit" element={<RegistryForm/>}/>
+     <Route path="/projects/:id" element={<ProjectDetail/>}/>
+     <Route path="/check" element={<CheckBeforeBuild user={user}/>}/>
+     <Route path="/assistant" element={<DiscoveryAssistant user={user}/>}/>
+     <Route path="/compare" element={<Compare/>}/>
+     <Route path="*" element={<div className="empty"><h1>Page not found</h1><Link to="/">Return to overview</Link></div>}/>
+    </Routes>
+   </main>
+   <footer className="portal-footer"><div><Link to="/" className="footer-brand">NavyLINK</Link><span>{PROJECT_MOTTO}</span></div><div><span className="footer-demo"><Database size={13} aria-hidden="true"/>Synthetic demonstration data</span><span>Demo identity is not production authentication</span></div></footer>
+   {selected.length>0&&<div className="comparison-tray"><GitCompareArrows size={18}/><strong>{selected.length} of 3 selected</strong><Link to="/compare">Compare capabilities <ArrowRight size={15}/></Link><button aria-label="Clear comparison" onClick={()=>setSelected([])}><X size={17}/></button></div>}
+  </div>
+ </AppContext.Provider>
 }
 createRoot(document.getElementById('root')!).render(<React.StrictMode><QueryClientProvider client={queryClient}><BrowserRouter><App/></BrowserRouter></QueryClientProvider></React.StrictMode>)

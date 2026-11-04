@@ -1,5 +1,7 @@
 # Three-minute offline demonstration
 
+Open with NavyLINK's motto: **Create once, discover everywhere, improve together.** Introduce the walkthrough as a way to find existing work, assess reuse and identify opportunities to contribute.
+
 Start in the repository root. Before the event, run `make setup` on Python 3.12+ with Node 22+. Run `make reset` to replace demo records and run history, then `make run`. Open http://127.0.0.1:8000. Do not reset a catalog containing work you want to retain.
 
 | Time | Action | Evidence to show |

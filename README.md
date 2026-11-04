@@ -1,10 +1,14 @@
 # NavyLINK
 
+**Create once, discover everywhere, improve together.**
+
 **Navy Locator for Innovation, Networking, and Knowledge.** A functional local capability discovery and reuse advisor for the November 4–6, 2026 FleetHacker demonstration.
 
 All 56 projects, organizations, people, datasets and resource links are fictional. The application contains no operational Navy information. Default Public visitor can discover 42 records; Catalog curator can discover all 56. Access labels are application demo permissions, not classification markings.
 
 ![NavyLINK overview](docs/dashboard.png)
+
+The homepage provides search with supported filters, live catalog counts, mission-domain and organization directories, and recently updated projects. See the [homepage implementation and verification notes](docs/HOMEPAGE.md).
 
 ## Run locally
 

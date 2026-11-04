@@ -2,8 +2,8 @@ import {test,expect} from '@playwright/test'
 
 test('dashboard → natural-language search → details → related → compare',async({page})=>{
  await page.goto('/')
- await expect(page.getByText('Discoverable capabilities')).toBeVisible()
- await expect(page.locator('.metric').first().locator('strong')).toHaveText('42')
+ await expect(page.getByRole('heading',{name:'NavyLINK',exact:true})).toBeVisible()
+ await expect(page.getByRole('navigation',{name:'Catalog overview'}).locator('a[href="/catalog"] .discovery-value')).toHaveText('42')
  await page.screenshot({path:'../docs/dashboard.png',fullPage:true})
  await page.getByRole('textbox',{name:'Search capabilities'}).fill('forecast equipment failures using maintenance work orders and supply inventory')
  await page.getByRole('button',{name:'Search',exact:true}).click()
@@ -19,6 +19,28 @@ test('dashboard → natural-language search → details → related → compare'
  await page.locator('.comparison-tray').getByRole('link').click()
  await expect(page.locator('table thead th')).toHaveCount(3)
  await expect(page.getByRole('heading',{name:'Reuse considerations'})).toBeVisible()
+})
+
+test('homepage shortcuts use the authorized catalog and open discovery workflows',async({page})=>{
+ await page.goto('/')
+ const overview=page.getByRole('navigation',{name:'Catalog overview'})
+ await expect(overview.locator('a[href="/catalog"] .discovery-value')).toHaveText('42')
+ await page.getByLabel('Demo identity').selectOption('curator')
+ await expect(overview.locator('a[href="/catalog"] .discovery-value')).toHaveText('56')
+ await page.getByLabel('Demo identity').selectOption('visitor')
+ await expect(overview.locator('a[href="/catalog"] .discovery-value')).toHaveText('42')
+ await overview.getByRole('link',{name:/Mission Domains/}).click()
+ await page.getByRole('navigation',{name:'Mission domains'}).getByRole('link',{name:/Maintenance/}).click()
+ await expect(page.getByRole('combobox',{name:'Mission domain',exact:true})).toHaveValue('Maintenance')
+ await expect(page.locator('.project-card').first()).toBeVisible()
+ await page.goto('/')
+ await overview.getByRole('link',{name:/Organizations/}).click()
+ await page.getByRole('navigation',{name:'Organization directory'}).getByRole('link').first().click()
+ await expect(page.getByRole('combobox',{name:'Organization',exact:true})).not.toHaveValue('')
+ await expect(page.locator('.project-card').first()).toBeVisible()
+ await page.goto('/')
+ await page.getByRole('link',{name:'Explore your idea'}).click()
+ await expect(page.getByRole('button',{name:'Analyze Proposal'})).toBeVisible()
 })
 
 test('maintenance and finance advisors show grounded candidates and actual activity',async({page})=>{
@@ -130,7 +152,7 @@ test('mobile navigation and local discovery with all external HTTP blocked',asyn
  const external:string[]=[]
  await page.route('**/*',route=>{const url=new URL(route.request().url());if(!['127.0.0.1','localhost'].includes(url.hostname)){external.push(url.href);return route.abort()}return route.continue()})
  await page.goto('/')
- await expect(page.locator('.metric').first().locator('strong')).toHaveText('42')
+ await expect(page.getByRole('navigation',{name:'Catalog overview'}).locator('a[href="/catalog"] .discovery-value')).toHaveText('42')
  await expect(page.locator('body')).toHaveJSProperty('scrollWidth',390)
  await page.screenshot({path:'../docs/mobile.png',fullPage:true})
  await page.getByRole('button',{name:'Toggle navigation'}).click()
