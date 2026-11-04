@@ -27,7 +27,7 @@ export function AppHeader({user, identities, selectedCount, onIdentityChange}:{
       </button>
       <nav id="primary-navigation" className={'navy-navigation'+(open?' is-open':'')} aria-label="Main navigation" onKeyDown={e=>{if(e.key==='Escape'){setOpen(false);menuToggle.current?.focus()}}}>
         <NavLink to="/" end>Home</NavLink>
-        <NavLink to="/catalog">Discover capabilities</NavLink>
+        <NavLink to="/catalog">Catalog</NavLink>
         <NavLink to="/check">Check before you build</NavLink>
         <NavLink to="/assistant">Discovery assistant</NavLink>
         <NavLink to="/people">People & data</NavLink>

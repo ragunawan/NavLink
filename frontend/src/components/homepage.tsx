@@ -3,7 +3,7 @@ import {Link, useNavigate} from 'react-router-dom'
 import {useQuery} from '@tanstack/react-query'
 import {ArrowRight, Building2, ChevronDown, Compass, FolderOpen, LoaderCircle, Search, ShieldCheck, SlidersHorizontal, Workflow, X, type LucideIcon} from 'lucide-react'
 import {api, type Overview, type Project} from '../api'
-import {projectStatuses, projectTypes} from '../catalog-filters'
+import {projectStatuses, projectTypes, searchModes} from '../catalog-filters'
 import {Button} from './button'
 
 const suggestions = ['Find similar analytics projects', 'Who is working on machine learning?', 'Existing logistics dashboards', 'Find Navy automation tools']
@@ -13,6 +13,7 @@ function HomeSearch({domains, organizations, loading, error}:{domains:string[]; 
   const navigate = useNavigate()
   const input = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState('')
+  const [mode, setMode] = useState('hybrid')
   const [expanded, setExpanded] = useState(false)
   const [filters, setFilters] = useState(emptyFilters)
   const filterCount = Object.values(filters).filter(Boolean).length
@@ -20,6 +21,7 @@ function HomeSearch({domains, organizations, loading, error}:{domains:string[]; 
   function search(value=query) {
     const params = new URLSearchParams()
     if(value.trim()) params.set('q', value.trim())
+    if(mode!=='hybrid') params.set('mode', mode)
     Object.entries(filters).forEach(([key,value])=>{if(value) params.set(key,value)})
     navigate('/catalog'+(params.size?'?'+params.toString():''))
   }
@@ -35,6 +37,7 @@ function HomeSearch({domains, organizations, loading, error}:{domains:string[]; 
         </button>
         <Button type="submit">Search<ArrowRight size={17} aria-hidden="true"/></Button>
       </div>
+      <label className="home-search-mode">Search mode<select value={mode} onChange={e=>setMode(e.target.value)}>{searchModes.map(value=><option key={value} value={value}>{value[0].toUpperCase()+value.slice(1)}</option>)}</select></label>
       {expanded&&<fieldset id="home-filters" className="home-filter-panel">
         <legend className="sr-only">Refine your search</legend>
         <div className="home-filter-heading"><strong>Refine your discovery</strong><button type="button" onClick={()=>setFilters(emptyFilters)}>Clear filters</button></div>
@@ -83,7 +86,7 @@ export function HomePage({user,renderProject}:{user:string;renderProject:(projec
       {failed&&<div role="alert" className="home-data-error">Some catalog data could not be loaded.<button type="button" onClick={()=>{void overview.refetch();void organizations.refetch()}}>Try again<ArrowRight size={14}/></button></div>}
       <nav className="home-summary" aria-label="Catalog overview">
         <DiscoveryCard count={data?.total} label="Projects" description="Explore existing Navy initiatives and capabilities" to="/catalog" icon={FolderOpen} loading={overview.isPending}/>
-        <DiscoveryCard count={data?Object.keys(data.domains).length:undefined} label="Mission Domains" description="Discover capabilities by mission area" to="/domains" icon={Compass} loading={overview.isPending}/>
+        <DiscoveryCard count={data?Object.keys(data.domains).length:undefined} label="Mission Domains" description="Explore projects by mission area" to="/domains" icon={Compass} loading={overview.isPending}/>
         <DiscoveryCard count={organizations.data?.length} label="Organizations" description="Connect with teams across the Navy" to="/organizations" icon={Building2} loading={organizations.isPending}/>
       </nav>
 

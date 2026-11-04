@@ -26,8 +26,10 @@ test('homepage counts, recent projects and directories reflect the active identi
   await expect(page.locator('.project-card').first()).toContainText(name)
 })
 
-test('homepage filters reach real search and persist when the query changes',async({page})=>{
+for(const mode of ['hybrid','keyword','semantic']) {
+test(`homepage ${mode} search preserves mode and filters when the query changes`,async({page})=>{
   await page.goto('/')
+  await page.getByRole('combobox',{name:'Search mode',exact:true}).selectOption(mode)
   await page.getByRole('button',{name:'Filters',exact:true}).click()
   await page.getByRole('combobox',{name:'Project type',exact:true}).selectOption('Dashboard')
   await page.getByRole('combobox',{name:'Mission domain',exact:true}).selectOption('Financial management')
@@ -38,7 +40,11 @@ test('homepage filters reach real search and persist when the query changes',asy
   await expect(search).toHaveValue('')
   await expect(search).toBeFocused()
   await search.fill('budget execution')
+  const response=page.waitForResponse(response=>{const url=new URL(response.url());return url.pathname==='/api/v1/search'&&url.searchParams.get('q')==='budget execution'})
   await search.press('Enter')
+  expect((await (await response).json()).mode).toBe(mode)
+  await expect(page.getByRole('heading',{name:'Catalog',exact:true})).toBeVisible()
+  await expect(page.getByRole('combobox',{name:'Search mode',exact:true})).toHaveValue(mode)
   await expect(page).toHaveURL(/project_type=Dashboard/)
   await expect(page.getByRole('combobox',{name:'Mission domain',exact:true})).toHaveValue('Financial management')
   await expect(page.locator('.project-card').first()).toContainText('Budget Compass')
@@ -46,18 +52,24 @@ test('homepage filters reach real search and persist when the query changes',asy
   await page.getByRole('button',{name:'Search',exact:true}).click()
   await expect(page.getByRole('combobox',{name:'Project type',exact:true})).toHaveValue('Dashboard')
   await expect(page.getByRole('combobox',{name:'Project status',exact:true})).toHaveValue('Operational')
+  await expect(page.getByRole('combobox',{name:'Search mode',exact:true})).toHaveValue(mode)
   await expect(page.locator('.project-card').first()).toContainText('Budget Compass')
   await page.getByRole('button',{name:'Clear search',exact:true}).click()
   await page.getByRole('button',{name:'Search',exact:true}).click()
   await expect(page).not.toHaveURL(/q=/)
+  await expect(page.getByRole('combobox',{name:'Search mode',exact:true})).toHaveValue(mode)
   await expect(page.getByRole('combobox',{name:'Project type',exact:true})).toHaveValue('Dashboard')
   await expect(page.locator('.project-card').first()).toContainText('Budget Compass')
 })
+}
 
 test('all suggestion chips execute search and filters can be reset',async({page})=>{
   for(const suggestion of ['Find similar analytics projects','Who is working on machine learning?','Existing logistics dashboards','Find Navy automation tools']) {
     await page.goto('/')
+    const mode=suggestion==='Existing logistics dashboards'?'keyword':'hybrid'
+    await page.getByRole('combobox',{name:'Search mode',exact:true}).selectOption(mode)
     await page.getByRole('button',{name:suggestion,exact:true}).click()
+    await expect(page.getByRole('combobox',{name:'Search mode',exact:true})).toHaveValue(mode)
     await expect(page.getByRole('textbox',{name:'Search capabilities'})).toHaveValue(suggestion)
     await expect(page.locator('.project-card').first()).toBeVisible()
   }
@@ -107,6 +119,7 @@ test('responsive homepage, filters and keyboard navigation work without external
     await page.goto('/')
     await expect(page.locator('.home-project .project-card')).toHaveCount(3)
     for(const project of await page.locator('.home-project .project-card').all()) await expect(project).toBeVisible()
+    await page.getByRole('combobox',{name:'Search mode',exact:true}).selectOption('semantic')
     await expect(page.locator('body')).toHaveJSProperty('scrollWidth',width)
     await page.getByRole('button',{name:'Filters',exact:true}).click()
     await expect(page.getByRole('combobox',{name:'Organization',exact:true})).toBeVisible()
@@ -115,7 +128,7 @@ test('responsive homepage, filters and keyboard navigation work without external
       const toggle=page.getByRole('button',{name:'Toggle navigation'})
       await toggle.click()
       await expect(toggle).toHaveAttribute('aria-expanded','true')
-      await page.getByRole('navigation',{name:'Main navigation'}).getByRole('link',{name:'Discover capabilities',exact:true}).focus()
+      await page.getByRole('navigation',{name:'Main navigation'}).getByRole('link',{name:'Catalog',exact:true}).focus()
       await page.keyboard.press('Escape')
       await expect(toggle).toBeFocused()
       await expect(toggle).toHaveAttribute('aria-expanded','false')
