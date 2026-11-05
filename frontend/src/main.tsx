@@ -7,7 +7,6 @@ import {api, type Comparison, type Hit, type Project, type ProjectPage, type Sea
 import {Button} from './components/button'
 import './styles.css'
 import './homepage.css'
-import {DiscoveryAssistant} from './discovery-assistant'
 import {CheckBeforeBuild} from './check-before-build'
 import {ProjectComparison} from './components/project-comparison'
 import {AppHeader} from './components/app-header'
@@ -17,7 +16,7 @@ import {projectTypes as types, projectStatuses as statuses, searchModes} from '.
 import {ProjectMetadata} from './components/project-metadata'
 import {RegistryEditor} from './components/registry-editor'
 import {RecordDirectory} from './components/record-directory'
-import {CatalogChatBubble} from './components/catalog-chat-bubble'
+import {CatalogChatBubble, LibrarianPage} from './components/catalog-chat-bubble'
 import './data-fields.css'
 
 const PROJECT_MOTTO = 'Create once, discover everywhere, improve together.'
@@ -118,7 +117,8 @@ function App() {
      <Route path="/projects/:id/edit" element={<RegistryForm/>}/>
      <Route path="/projects/:id" element={<ProjectDetail/>}/>
      <Route path="/check" element={<CheckBeforeBuild user={user}/>}/>
-     <Route path="/assistant" element={<DiscoveryAssistant user={user}/>}/>
+     <Route path="/librarian" element={<LibrarianPage user={user}/>}/>
+     <Route path="/assistant" element={<LibrarianPage user={user}/>}/>
      <Route path="/compare" element={<Compare/>}/>
      <Route path="*" element={<div className="empty"><h1>Page not found</h1><Link to="/">Return to overview</Link></div>}/>
     </Routes>

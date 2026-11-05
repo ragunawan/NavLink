@@ -1,5 +1,5 @@
-import {Fragment, useMemo, useRef, useState} from 'react'
-import {ArrowUpRight, Bot, LoaderCircle, MessageCircle, Send, X} from 'lucide-react'
+import {Fragment, useRef, useState} from 'react'
+import {ArrowUpRight, Bot, Download, FileText, LoaderCircle, Maximize2, MessageCircle, Minimize2, Send, X} from 'lucide-react'
 import {api} from '../api'
 
 type ChatProject={
@@ -34,6 +34,7 @@ const commonQuestions=[
 ]
 const compact=(text:string)=>text.length>1800?text.slice(0,1800)+'...':text
 const blockStart=/^(```|#{1,6}\s+|[-*]\s+|\d+\.\s+|>\s*)/
+const chatTitle='Librarian'
 
 function renderInline(text:string) {
   return text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g).map((part,index)=>{
@@ -59,7 +60,10 @@ function MarkdownText({text}:{text:string}) {
     }
     const heading=line.match(/^#{1,6}\s+(.+)$/)
     if(heading) {
-      blocks.push(<h4 key={blocks.length}>{renderInline(heading[1])}</h4>)
+      const level=Math.min(4, Math.max(2, line.match(/^#+/)?.[0].length ?? 4))
+      if(level===2)blocks.push(<h2 key={blocks.length}>{renderInline(heading[1])}</h2>)
+      else if(level===3)blocks.push(<h3 key={blocks.length}>{renderInline(heading[1])}</h3>)
+      else blocks.push(<h4 key={blocks.length}>{renderInline(heading[1])}</h4>)
       index++
       continue
     }
@@ -94,21 +98,73 @@ function MarkdownText({text}:{text:string}) {
   return <div className="chat-markdown">{blocks}</div>
 }
 
-export function CatalogChatBubble({user}:{user:string}) {
-  const [open,setOpen]=useState(false)
+function transcript(messages:ChatMessage[]) {
+  return messages.map(message=>`${message.role==='user'?'User':chatTitle}:\n${message.content}`).join('\n\n')
+}
+
+function escapePdfText(text:string) {
+  return text.replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)')
+}
+
+function makePdf(text:string) {
+  const lines=text.replace(/[^\x09\x0a\x0d\x20-\x7e]/g,'?').replace(/\r/g,'').split('\n').flatMap(line=>{
+    const chunks:string[]=[]
+    for(let index=0;index<line.length;index+=86)chunks.push(line.slice(index,index+86))
+    return chunks.length?chunks:['']
+  })
+  const pages:string[]=[]
+  for(let index=0;index<lines.length;index+=42)pages.push(lines.slice(index,index+42).map((line,lineIndex)=>`BT /F1 10 Tf 50 ${760-lineIndex*16} Td (${escapePdfText(line)}) Tj ET`).join('\n'))
+  const objects=[
+    '<< /Type /Catalog /Pages 2 0 R >>',
+    `<< /Type /Pages /Kids [${pages.map((_,index)=>`${3+index*2} 0 R`).join(' ')}] /Count ${pages.length} >>`,
+    ...pages.flatMap((page,index)=>[
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 ${3+pages.length*2} 0 R >> >> /Contents ${4+index*2} 0 R >>`,
+      `<< /Length ${page.length} >>\nstream\n${page}\nendstream`,
+    ]),
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
+  ]
+  const header='%PDF-1.4\n'
+  let body=header
+  const offsets=[0]
+  objects.forEach((object,index)=>{offsets.push(body.length);body+=`${index+1} 0 obj\n${object}\nendobj\n`})
+  const xref=body.length
+  body+=`xref\n0 ${objects.length+1}\n0000000000 65535 f \n${offsets.slice(1).map(offset=>String(offset).padStart(10,'0')+' 00000 n ').join('\n')}\n`
+  body+=`trailer\n<< /Size ${objects.length+1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`
+  return body
+}
+
+function downloadFile(filename:string, mime:string, content:string) {
+  const blob=new Blob([content],{type:mime})
+  const url=URL.createObjectURL(blob)
+  const link=document.createElement('a')
+  link.href=url
+  link.download=filename
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(url)
+}
+
+function exportTranscript(messages:ChatMessage[], format:'txt'|'doc'|'pdf') {
+  const text=transcript(messages)
+  if(format==='txt')downloadFile('librarian-chat.txt','text/plain;charset=utf-8',text)
+  if(format==='doc')downloadFile('librarian-chat.doc','application/msword;charset=utf-8',`<html><body><pre>${text.replace(/[&<>]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[char]!))}</pre></body></html>`)
+  if(format==='pdf')downloadFile('librarian-chat.pdf','application/pdf',makePdf(text))
+}
+
+function LibrarianChat({user, presentation='floating', onClose, onExpand, onCollapse}:{user:string; presentation?:'floating'|'fullscreen'|'page'; onClose?:()=>void; onExpand?:()=>void; onCollapse?:()=>void}) {
   const [question,setQuestion]=useState('')
   const [messages,setMessages]=useState<ChatMessage[]>([])
   const [suggestions,setSuggestions]=useState(commonQuestions)
   const [pending,setPending]=useState(false)
   const [error,setError]=useState('')
   const inputRef=useRef<HTMLTextAreaElement|null>(null)
-  const completion=useMemo(()=>question.trim()?suggestions.find(item=>item.toLowerCase().startsWith(question.trim().toLowerCase())&&item.toLowerCase()!==question.trim().toLowerCase()):'', [question,suggestions])
-  const completionTail=completion&&question?completion.slice(question.length):''
+  const hasAssistantReply=messages.some(message=>message.role==='assistant')
 
   async function ask(text=question) {
     const trimmed=text.trim()
     if(!trimmed||pending)return
-    setOpen(true);setPending(true);setError('');setQuestion('')
+    setPending(true);setError('');setQuestion('')
     const history=messages.slice(-8).map(message=>({role:message.role,content:compact(message.content)}))
     setMessages(previous=>[...previous,{role:'user',content:trimmed}])
     try {
@@ -123,9 +179,8 @@ export function CatalogChatBubble({user}:{user:string}) {
     }
   }
 
-  return <div className={'catalog-chat '+(open?'open':'')}>
-    {open&&<section className="catalog-chat-panel" aria-label="LinkBot">
-      <header><div><span><Bot size={16}/>LinkBot</span><small>Ask the current database for projects, data, and workflows.</small></div><button aria-label="Close LinkBot" onClick={()=>setOpen(false)}><X size={18}/></button></header>
+  return <section className={'catalog-chat-panel '+presentation} aria-label={chatTitle}>
+      <header><div><span><Bot size={16}/>{chatTitle}</span><small>Ask the current database for projects, data, and workflows.</small></div><div className="catalog-chat-actions">{hasAssistantReply&&<div className="catalog-chat-export" aria-label="Export chat"><button title="Export TXT" aria-label="Export chat as TXT" onClick={()=>exportTranscript(messages,'txt')}><FileText size={16}/><span>TXT</span></button><button title="Export DOC" aria-label="Export chat as DOC" onClick={()=>exportTranscript(messages,'doc')}><Download size={16}/><span>DOC</span></button><button title="Export PDF" aria-label="Export chat as PDF" onClick={()=>exportTranscript(messages,'pdf')}><Download size={16}/><span>PDF</span></button></div>}{onExpand&&<button aria-label="Expand Librarian" onClick={onExpand}><Maximize2 size={18}/></button>}{onCollapse&&<button aria-label="Collapse Librarian" onClick={onCollapse}><Minimize2 size={18}/></button>}{onClose&&<button aria-label="Close Librarian" onClick={onClose}><X size={18}/></button>}</div></header>
       <div className="catalog-chat-body">
         {!messages.length&&<div className="catalog-chat-empty"><strong>What are you trying to build?</strong><p>Start with one of these, or ask for an end-to-end workflow.</p><div>{starterQuestions.map(item=><button key={item} onClick={()=>void ask(item)}>{item}</button>)}</div></div>}
         {messages.map((message,index)=><article key={index} className={'chat-message '+message.role}>{message.role==='assistant'?<MarkdownText text={message.content}/>:<p>{message.content}</p>}{message.projects?.length?<div className="chat-projects">{message.projects.slice(0,3).map(project=><a key={project.id} href={project.url}><div><strong>{project.name}</strong><span>{project.organization} · {project.domain}</span><p>{project.mission_problem}</p><small>{project.reliability}% useful · {project.usefulness} reliability · {project.status}</small></div><ArrowUpRight size={14}/></a>)}</div>:null}</article>)}
@@ -135,13 +190,22 @@ export function CatalogChatBubble({user}:{user:string}) {
       </div>
       <form onSubmit={event=>{event.preventDefault();void ask()}}>
         <div className="chat-input-wrap">
-          {completion&&<button type="button" className="chat-completion" onClick={()=>setQuestion(completion)}>{completion}</button>}
-          {completionTail&&<div className="chat-autofill" aria-hidden="true"><span>{question}</span>{completionTail}</div>}
-          <textarea ref={inputRef} aria-label="Ask the catalog chatbot" rows={2} maxLength={1200} placeholder="What are you looking for?" value={question} onChange={event=>setQuestion(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();void ask()}}}/>
+          <textarea ref={inputRef} aria-label="Ask the Librarian" rows={presentation==='page'?3:2} maxLength={1200} placeholder="What are you looking for?" value={question} onChange={event=>setQuestion(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();void ask()}}}/>
         </div>
         <button aria-label="Send question" disabled={pending||!question.trim()}><Send size={17}/></button>
       </form>
-    </section>}
-    <button className="catalog-chat-toggle" aria-label={open?'Close LinkBot':'Open LinkBot'} onClick={()=>setOpen(value=>!value)}>{open?<X size={23}/>:<MessageCircle size={25}/>}</button>
+    </section>
+}
+
+export function LibrarianPage({user}:{user:string}) {
+  return <section className="librarian-page"><LibrarianChat user={user} presentation="page"/></section>
+}
+
+export function CatalogChatBubble({user}:{user:string}) {
+  const [open,setOpen]=useState(false)
+  const [fullscreen,setFullscreen]=useState(false)
+  return <div className={'catalog-chat '+(open?'open':'')+' '+(fullscreen?'fullscreen':'')}>
+    {open&&<LibrarianChat user={user} presentation={fullscreen?'fullscreen':'floating'} onExpand={fullscreen?undefined:()=>setFullscreen(true)} onCollapse={fullscreen?()=>setFullscreen(false):undefined} onClose={()=>{setOpen(false);setFullscreen(false)}}/>}
+    <button className="catalog-chat-toggle" aria-label={open?'Close Librarian':'Open Librarian'} onClick={()=>setOpen(value=>!value)}>{open?<X size={23}/>:<MessageCircle size={25}/>}</button>
   </div>
 }
