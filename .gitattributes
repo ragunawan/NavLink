@@ -1,1 +1,14 @@
-.devcontainer/post-create.sh text eol=lf
+# Keep Linux tooling usable when Git checks out files on Windows.
+* text=auto eol=lf
+
+# Preserve binary assets byte-for-byte.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.db binary
+*.sqlite binary
+*.sqlite3 binary
+*.pdf binary
