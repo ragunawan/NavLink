@@ -8,19 +8,17 @@ The devcontainer provides the same Linux environment on Windows, macOS and Linux
 2. On Windows, enable Docker Desktop's **WSL 2 backend** and use **Linux containers**. For faster file access, clone the repository into your WSL Linux filesystem (for example, `~/src/navylink`) and open it from WSL with `code .`. Enable Docker Desktop's integration for that WSL distribution. A Windows filesystem checkout also works; polling is enabled for frontend and backend reloads. See Microsoft's [Windows and volume guidance](https://code.visualstudio.com/remote/advancedcontainers/improve-performance).
 3. Open the repository folder in VS Code, run **Dev Containers: Reopen in Container** from the Command Palette, and wait for setup to finish. You can also use **Dev Containers: Clone Repository in Container Volume...** to keep the entire checkout in Docker storage.
 
-Setup creates `.env` from `.env.example` if needed, installs dependencies, initializes an empty development database with the fictional regression fixtures, builds the frontend, and installs Chromium and its Linux dependencies. Existing `.env` settings are preserved. The default configuration needs no model download or API key. For the optional neural encoder, leave `NAVYLINK_MODEL_PATH` unset during initial setup, then run `make model` before enabling that setting and running `make reindex` as described in the [README](../README.md#search-and-overlap-decisions).
+Setup creates `.env` from `.env.example` if needed, installs dependencies, initializes an empty development database with the fictional regression fixtures, builds the frontend, and installs Chromium and its Linux dependencies. The dev container recommends the OpenAI Codex extension, which VS Code installs and activates when the container opens; sign in to Codex in VS Code to use it. When the container starts, it runs `make run` in the background and waits for the API to become healthy. Startup output is written to `/tmp/navylink.log`. Existing `.env` settings are preserved. The default configuration needs no model download or API key. For the optional neural encoder, leave `NAVYLINK_MODEL_PATH` unset during initial setup, then run `make model` before enabling that setting and running `make reindex` as described in the [README](../README.md#search-and-overlap-decisions).
 
 The commands below run in VS Code's **container terminal**. Python, Node and Make do not need to be installed on the host.
 
 ## Run and verify
 
-For the compiled app:
+The compiled app starts automatically at http://127.0.0.1:8000; API documentation is at http://127.0.0.1:8000/docs. If automatic startup fails, check `/tmp/navylink.log` and run the following in the container terminal after fixing the reported issue:
 
 ```sh
 make run
 ```
-
-Open http://127.0.0.1:8000; API documentation is at http://127.0.0.1:8000/docs.
 
 For live frontend and backend reloads, run these in separate terminals:
 
@@ -59,7 +57,7 @@ The source tree is shared with the host. Separate Docker named volumes hold `.ve
 
 Inside the container, `NAVYLINK_DB` is set to `/var/lib/navylink/navylink.db`. This environment variable takes precedence over the value in `.env`; the host's `data/navylink.db` and the deployment Compose volume are separate. SQLite backups from `make sample` also stay in the development data volume. Removing that volume deletes its database and backups. Changes to tracked source files, including evaluation results and screenshots, are still visible on the host.
 
-After changing requirements or the npm lockfile, run `make setup`. After changing Playwright, also run `cd frontend && npx playwright install --with-deps chromium`. After changing `devcontainer.json`, run **Dev Containers: Rebuild Container**; setup runs again and keeps existing catalog data. To recover from a failed initial download, rerun `bash .devcontainer/post-create.sh` inside the container.
+After changing requirements or the npm lockfile, run `make setup`. After changing Playwright, also run `cd frontend && npx playwright install --with-deps chromium`. After changing `devcontainer.json`, run **Dev Containers: Rebuild Container** to install newly recommended extensions; setup runs again and keeps existing catalog data. To recover from a failed initial download, rerun `bash .devcontainer/post-create.sh` inside the container.
 
 `.devcontainer/post-create.sh` is enforced to use LF line endings through `.gitattributes`, so Bash can run it on Windows checkouts as well.
 
