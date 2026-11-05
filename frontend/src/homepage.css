@@ -52,6 +52,7 @@
 .home-filter-toggle.is-active>svg:last-child { transform: rotate(180deg); }
 .home-search-mode { display: flex; align-items: center; justify-content: flex-end; gap: var(--space-sm); font-weight: 400; color: var(--color-muted); margin-top: var(--space-sm); }
 .home-search-mode select { width: 130px; }
+.home-search-mode select.si-powered { color: #a855f7; background-image: linear-gradient(90deg, #ef4444, #f97316, #eab308, #22c55e, #06b6d4, #3b82f6, #a855f7); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .home-filter-panel { margin-top: var(--space-lg); padding: var(--space-lg); border-radius: var(--radius-card); background: var(--color-paper-2); box-shadow: var(--shadow-card); }
 .home-filter-heading { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); margin-bottom: var(--space-md); }
 .home-filter-heading button { text-decoration: underline; min-height: 44px; font-size: var(--text-sm); }

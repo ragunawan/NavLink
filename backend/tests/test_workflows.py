@@ -1,6 +1,7 @@
 import json
 import socket
 
+import httpx
 import pytest
 from sqlalchemy import select
 
@@ -108,6 +109,93 @@ def test_validation_errors(client, curator):
     assert client.get(PREFIX + "/projects", headers={"X-Demo-User": "unknown"}).status_code == 401
     # FTS metacharacters never become query syntax.
     assert client.get(PREFIX + "/search", params={"q": '" OR * - NEAR(foo)', "mode": "keyword"}).status_code == 200
+
+
+def test_openai_search_reranks_only_authorized_local_candidates(client, monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "PRIVATE_TEST_KEY")
+    monkeypatch.setenv("OPENAI_CHAT_MODEL", "configured-test-model")
+    monkeypatch.delenv("NAVYLINK_LLM_API_KEY", raising=False)
+    original = httpx.Client
+    captured = {}
+
+    def handler(request):
+        assert request.url == "https://api.openai.com/v1/responses"
+        assert request.headers["Authorization"] == "Bearer PRIVATE_TEST_KEY"
+        body = json.loads(request.content)
+        assert body["model"] == "configured-test-model"
+        assert body["store"] is False
+        prompt = json.loads(body["input"])
+        assert "json" in prompt["format_instruction"].casefold()
+        candidates = prompt["candidates"]
+        captured.update(prompt=prompt, body=body)
+        ids = [candidate["id"] for candidate in candidates]
+        # Reverse the local order to prove that model ranking is applied.
+        return httpx.Response(200, json={"output_text": json.dumps({"ranked_ids": list(reversed(ids))})})
+
+    monkeypatch.setattr(httpx, "Client", lambda **kwargs: original(transport=httpx.MockTransport(handler), **kwargs))
+    response = client.get(PREFIX + "/search", params={"q": PROPOSAL["description"], "mode": "openai", "domain": "Maintenance", "limit": 2})
+    assert response.status_code == 200, response.text
+    result = response.json()
+    assert result["mode"] == "openai"
+    assert result["encoder"] == "OpenAI configured-test-model reranker"
+    assert len(result["results"]) == 2
+    assert result["results"][0]["rank"] == 1
+    assert result["results"][0]["project"]["id"] == captured["prompt"]["candidates"][-1]["id"]
+    assert "OpenAI model" in result["results"][0]["inference"]
+    assert all(candidate["domain"] == "Maintenance" for candidate in captured["prompt"]["candidates"])
+    assert "maint-07" not in {candidate["id"] for candidate in captured["prompt"]["candidates"]}
+    assert all("contacts" not in candidate for candidate in captured["prompt"]["candidates"])
+    assert "PRIVATE_TEST_KEY" not in response.text
+
+
+def test_openai_search_requires_key_and_rejects_untrusted_project_ids(client, monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("NAVYLINK_LLM_API_KEY", raising=False)
+    assert client.get(PREFIX + "/search", params={"q": "maintenance", "mode": "openai"}).status_code == 503
+
+    monkeypatch.setenv("OPENAI_API_KEY", "PRIVATE_TEST_KEY")
+    monkeypatch.setenv("OPENAI_CHAT_MODEL", "configured-test-model")
+    original = httpx.Client
+
+    def handler(request):
+        return httpx.Response(200, json={"output_text": json.dumps({"ranked_ids": ["hidden-project"]})})
+
+    monkeypatch.setattr(httpx, "Client", lambda **kwargs: original(transport=httpx.MockTransport(handler), **kwargs))
+    response = client.get(PREFIX + "/search", params={"q": "maintenance", "mode": "openai"})
+    assert response.status_code == 502
+    assert "PRIVATE_TEST_KEY" not in response.text
+    assert "hidden-project" not in response.text
+
+
+def test_openai_search_reports_safe_provider_error_details(client, monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "PRIVATE_TEST_KEY")
+    monkeypatch.setenv("OPENAI_CHAT_MODEL", "configured-test-model")
+    original = httpx.Client
+
+    def handler(request):
+        return httpx.Response(400, json={"error": {"type": "unsupported_parameter", "code": "unsupported_parameter", "message": "PRIVATE_TEST_KEY must not be surfaced"}})
+
+    monkeypatch.setattr(httpx, "Client", lambda **kwargs: original(transport=httpx.MockTransport(handler), **kwargs))
+    response = client.get(PREFIX + "/search", params={"q": "maintenance", "mode": "openai"})
+    assert response.status_code == 502
+    assert "HTTP 400, type=unsupported_parameter, code=unsupported_parameter" in response.json()["detail"]
+    assert "PRIVATE_TEST_KEY" not in response.text
+    assert "must not be surfaced" not in response.text
+
+
+def test_openai_search_reads_streamed_http_errors_before_reporting(client, monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "PRIVATE_TEST_KEY")
+    monkeypatch.setenv("OPENAI_CHAT_MODEL", "configured-test-model")
+    original = httpx.Client
+
+    def handler(request):
+        return httpx.Response(400, json={"error": {"type": "invalid_request_error", "param": "text.format", "message": "Do not return this body."}})
+
+    monkeypatch.setattr(httpx, "Client", lambda **kwargs: original(transport=httpx.MockTransport(handler), **kwargs))
+    response = client.get(PREFIX + "/search", params={"q": "maintenance", "mode": "openai"})
+    assert response.status_code == 502
+    assert "HTTP 400, type=invalid_request_error, param=text.format" in response.json()["detail"]
+    assert "Do not return this body" not in response.text
 
 
 def test_overlap_uses_evidence_and_type_rules(client):

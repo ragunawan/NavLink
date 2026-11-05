@@ -22,6 +22,7 @@ from .auth import USERS, authorized, present, require_project
 from .database import Project, Run, connect
 from .encoding import get_encoder
 from .migrations import migrate_catalog
+from .openai_search import openai_search
 from .registry import save_project
 from .schemas import AgentRun, Assessment, CompareRequest, Comparison, Health, Overview, ProjectCreate, ProjectInput, ProjectOut, ProjectPage, Proposal, SearchResponse
 from .search import filter_projects, related, search
@@ -147,8 +148,11 @@ def create_app(db_url=None, auto_seed=True):
         return Response(status_code=204)
 
     @app.get(prefix + "/search", response_model=SearchResponse)
-    def search_api(session: Session, user: User, q: str = Query(min_length=1, max_length=3000), mode: Literal["hybrid", "keyword", "semantic"] = "hybrid", domain: str | None = None, organization: str | None = None, project_type: str | None = None, status: str | None = None, limit: int = Query(30, ge=1, le=100)):
-        return search(session, user, q, mode, {"domain": domain, "organization": organization, "project_type": project_type, "status": status}, limit)
+    def search_api(session: Session, user: User, q: str = Query(min_length=1, max_length=3000), mode: Literal["hybrid", "keyword", "semantic", "openai"] = "hybrid", domain: str | None = None, organization: str | None = None, project_type: str | None = None, status: str | None = None, limit: int = Query(30, ge=1, le=100)):
+        filters = {"domain": domain, "organization": organization, "project_type": project_type, "status": status}
+        if mode == "openai":
+            return openai_search(session, user, q, filters, limit)
+        return search(session, user, q, mode, filters, limit)
 
     @app.get(prefix + "/projects/{project_id}/related", response_model=SearchResponse)
     @app.get("/api/projects/{project_id}/related", response_model=SearchResponse, include_in_schema=False)

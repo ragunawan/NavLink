@@ -3,7 +3,7 @@ import {Link, useNavigate} from 'react-router-dom'
 import {useQuery} from '@tanstack/react-query'
 import {ChevronDown, FolderOpen, LoaderCircle, Search, ShieldCheck, SlidersHorizontal, Workflow, X} from 'lucide-react'
 import {api, type Overview, type Project} from '../api'
-import {projectStatuses, projectTypes, searchModes} from '../catalog-filters'
+import {projectStatuses, projectTypes, searchModes, searchModeLabel} from '../catalog-filters'
 import {Button} from './button'
 
 const suggestions = ['Find similar analytics projects', 'Who is working on machine learning?', 'Existing logistics dashboards', 'Find Navy automation tools']
@@ -38,7 +38,7 @@ function HomeSearch({domains, organizations, loading, error}:{domains:string[]; 
         </button>
         <Button type="submit">Search</Button>
       </div>
-      <label className="home-search-mode">Search mode<select value={mode} onChange={e=>setMode(e.target.value)}>{searchModes.map(value=><option key={value} value={value}>{value[0].toUpperCase()+value.slice(1)}</option>)}</select></label>
+      <label className="home-search-mode">Search mode<select className={mode==='openai'?'si-powered':''} value={mode} onChange={e=>setMode(e.target.value)}>{searchModes.map(value=><option key={value} value={value}>{searchModeLabel(value)}</option>)}</select></label>
       {expanded&&<fieldset id="home-filters" className="home-filter-panel">
         <legend className="sr-only">Refine your search</legend>
         <div className="home-filter-heading"><strong>Refine your discovery</strong><button type="button" onClick={()=>setFilters(emptyFilters)}>Clear filters</button></div>
