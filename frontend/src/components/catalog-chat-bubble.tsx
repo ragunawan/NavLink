@@ -1,5 +1,6 @@
 import {Fragment, useRef, useState} from 'react'
-import {ArrowUpRight, Bot, Download, FileText, LoaderCircle, Maximize2, MessageCircle, Minimize2, Send, X} from 'lucide-react'
+import {useNavigate} from 'react-router-dom'
+import {ArrowUpRight, Bot, Download, FileText, LoaderCircle, Maximize2, MessageCircle, Send, X} from 'lucide-react'
 import {api} from '../api'
 
 type ChatProject={
@@ -152,7 +153,7 @@ function exportTranscript(messages:ChatMessage[], format:'txt'|'doc'|'pdf') {
   if(format==='pdf')downloadFile('librarian-chat.pdf','application/pdf',makePdf(text))
 }
 
-function LibrarianChat({user, presentation='floating', onClose, onExpand, onCollapse}:{user:string; presentation?:'floating'|'fullscreen'|'page'; onClose?:()=>void; onExpand?:()=>void; onCollapse?:()=>void}) {
+function LibrarianChat({user, presentation='floating', onClose, onExpand}:{user:string; presentation?:'floating'|'page'; onClose?:()=>void; onExpand?:()=>void}) {
   const [question,setQuestion]=useState('')
   const [messages,setMessages]=useState<ChatMessage[]>([])
   const [suggestions,setSuggestions]=useState(commonQuestions)
@@ -180,7 +181,7 @@ function LibrarianChat({user, presentation='floating', onClose, onExpand, onColl
   }
 
   return <section className={'catalog-chat-panel '+presentation} aria-label={chatTitle}>
-      <header><div><span><Bot size={16}/>{chatTitle}</span><small>Ask the current database for projects, data, and workflows.</small></div><div className="catalog-chat-actions">{hasAssistantReply&&<div className="catalog-chat-export" aria-label="Export chat"><button title="Export TXT" aria-label="Export chat as TXT" onClick={()=>exportTranscript(messages,'txt')}><FileText size={16}/><span>TXT</span></button><button title="Export DOC" aria-label="Export chat as DOC" onClick={()=>exportTranscript(messages,'doc')}><Download size={16}/><span>DOC</span></button><button title="Export PDF" aria-label="Export chat as PDF" onClick={()=>exportTranscript(messages,'pdf')}><Download size={16}/><span>PDF</span></button></div>}{onExpand&&<button aria-label="Expand Librarian" onClick={onExpand}><Maximize2 size={18}/></button>}{onCollapse&&<button aria-label="Collapse Librarian" onClick={onCollapse}><Minimize2 size={18}/></button>}{onClose&&<button aria-label="Close Librarian" onClick={onClose}><X size={18}/></button>}</div></header>
+      <header><div><span><Bot size={16}/>{chatTitle}</span><small>Ask the current database for projects, data, and workflows.</small></div><div className="catalog-chat-actions">{hasAssistantReply&&<div className="catalog-chat-export" aria-label="Export chat"><button title="Export TXT" aria-label="Export chat as TXT" onClick={()=>exportTranscript(messages,'txt')}><FileText size={16}/><span>TXT</span></button><button title="Export DOC" aria-label="Export chat as DOC" onClick={()=>exportTranscript(messages,'doc')}><Download size={16}/><span>DOC</span></button><button title="Export PDF" aria-label="Export chat as PDF" onClick={()=>exportTranscript(messages,'pdf')}><Download size={16}/><span>PDF</span></button></div>}{onExpand&&<button aria-label="Open full Librarian page" onClick={onExpand}><Maximize2 size={18}/></button>}{onClose&&<button aria-label="Close Librarian" onClick={onClose}><X size={18}/></button>}</div></header>
       <div className="catalog-chat-body">
         {!messages.length&&<div className="catalog-chat-empty"><strong>What are you trying to build?</strong><p>Start with one of these, or ask for an end-to-end workflow.</p><div>{starterQuestions.map(item=><button key={item} onClick={()=>void ask(item)}>{item}</button>)}</div></div>}
         {messages.map((message,index)=><article key={index} className={'chat-message '+message.role}>{message.role==='assistant'?<MarkdownText text={message.content}/>:<p>{message.content}</p>}{message.projects?.length?<div className="chat-projects">{message.projects.slice(0,3).map(project=><a key={project.id} href={project.url}><div><strong>{project.name}</strong><span>{project.organization} · {project.domain}</span><p>{project.mission_problem}</p><small>{project.reliability}% useful · {project.usefulness} reliability · {project.status}</small></div><ArrowUpRight size={14}/></a>)}</div>:null}</article>)}
@@ -203,9 +204,9 @@ export function LibrarianPage({user}:{user:string}) {
 
 export function CatalogChatBubble({user}:{user:string}) {
   const [open,setOpen]=useState(false)
-  const [fullscreen,setFullscreen]=useState(false)
-  return <div className={'catalog-chat '+(open?'open':'')+' '+(fullscreen?'fullscreen':'')}>
-    {open&&<LibrarianChat user={user} presentation={fullscreen?'fullscreen':'floating'} onExpand={fullscreen?undefined:()=>setFullscreen(true)} onCollapse={fullscreen?()=>setFullscreen(false):undefined} onClose={()=>{setOpen(false);setFullscreen(false)}}/>}
+  const navigate=useNavigate()
+  return <div className={'catalog-chat '+(open?'open':'')}>
+    {open&&<LibrarianChat user={user} presentation="floating" onExpand={()=>navigate('/librarian')} onClose={()=>setOpen(false)}/>}
     <button className="catalog-chat-toggle" aria-label={open?'Close Librarian':'Open Librarian'} onClick={()=>setOpen(value=>!value)}>{open?<X size={23}/>:<MessageCircle size={25}/>}</button>
   </div>
 }
