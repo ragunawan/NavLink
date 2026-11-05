@@ -73,7 +73,7 @@ Endpoints: `GET/POST /api/v1/datasources` and `GET/PATCH/DELETE /api/v1/datasour
 
 ## Sample catalog
 
-[data/sample](../../data/sample/) contains 500 projects, 176 people and 120 datasources. The importer validates the complete set, unique identifiers, dates, and personnel/datasource references before opening the database. Lists use semicolons. CSV project IDs and historical dates are preserved. Financial Management is normalized to the existing Financial management domain. Referenced datasource descriptions also populate associated datasets for discovery. Missing technical details and reuse terms remain unknown.
+[data/sample](../../data/sample/) contains 500 projects, 256 people and 214 datasources. The importer validates the complete set, unique identifiers, dates, and personnel/datasource references before opening the database. List fields accept semicolon-delimited values or JSON arrays. CSV project IDs (including non-UUID IDs) and historical dates are preserved. Financial Management is normalized to the existing Financial management domain. Referenced datasource descriptions also populate associated datasets for discovery. Missing technical details and reuse terms remain unknown.
 
 All sample records are fictional and imported with public demo visibility. Classification and network values are catalog metadata. Loading samples replaces projects, personnel, datasources, domain/organization lookups, search indexes, and saved workflow history in one transaction. A failed write rolls back the replacement. Repeating the command produces the same catalog without duplicates. Startup leaves the imported catalog in place.
 

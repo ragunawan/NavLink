@@ -4,7 +4,7 @@
 
 **Navy Locator for Innovation, Networking, and Knowledge.** A functional local capability discovery and reuse advisor for the November 4–6, 2026 FleetHacker demonstration.
 
-Projects, organizations, people, datasets and resource links are fictional. The application contains no operational Navy information. The sample catalog contains 500 projects, 176 people and 120 datasources, all publicly discoverable demo records. The separate 56-project regression fixture catalog includes 42 public records and role-restricted examples. Access labels are application demo permissions, not classification markings.
+Projects, organizations, people, datasets and resource links are fictional. The application contains no operational Navy information. The sample catalog contains 500 projects, 256 people and 214 datasources, all publicly discoverable demo records. The separate 56-project regression fixture catalog includes 42 public records and role-restricted examples. Access labels are application demo permissions, not classification markings.
 
 ![NavyLINK overview](docs/dashboard.png)
 

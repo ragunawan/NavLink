@@ -21,11 +21,11 @@ def count(session, model):
 
 def test_sample_replacement_preserves_fields_links_and_is_repeatable(client):
     catalog = load_sample(SAMPLE)
-    assert catalog.counts() == {"projects": 500, "people": 176, "datasources": 120}
+    assert catalog.counts() == {"projects": 500, "people": 256, "datasources": 214}
     with client.app.state.factory() as session:
         replace_catalog(session, catalog)
         replace_catalog(session, catalog)
-        assert (count(session, Project), count(session, Person), count(session, Datasource)) == (500, 176, 120)
+        assert (count(session, Project), count(session, Person), count(session, Datasource)) == (500, 256, 214)
         assert count(session, Run) == 0
         assert session.get(Project, "maint-01") is None
         assert session.scalar(text("SELECT count(*) FROM project_fts")) == 500
@@ -52,7 +52,7 @@ def test_sample_replacement_preserves_fields_links_and_is_repeatable(client):
     filtered = client.get("/api/v1/projects/page", params={"domain": "Financial Management"}).json()
     assert 0 < filtered["total"] < 500
     assert all(p["domain"] == "Financial management" for p in filtered["items"])
-    hits = client.get("/api/v1/search", params={"q": "CASREP field dictionary", "mode": "hybrid"}).json()["results"]
+    hits = client.get("/api/v1/search", params={"q": payload.name, "mode": "hybrid"}).json()["results"]
     assert project_id in {hit["project"]["id"] for hit in hits}
 
 

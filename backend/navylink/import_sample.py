@@ -3,9 +3,9 @@ import argparse
 import csv
 from dataclasses import dataclass
 from datetime import datetime, timezone
+import json
 from pathlib import Path
 import sqlite3
-from uuid import UUID
 
 from sqlalchemy import delete
 
@@ -23,7 +23,16 @@ HEADERS = {
 
 
 def terms(value):
-    return list(dict.fromkeys(part.strip() for part in value.split(";") if part.strip()))
+    if value.lstrip().startswith("["):
+        try:
+            parts = json.loads(value)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"Invalid JSON list: {value}") from exc
+        if not isinstance(parts, list) or any(not isinstance(part, str) for part in parts):
+            raise ValueError("Expected a list of strings")
+    else:
+        parts = value.split(";")
+    return list(dict.fromkeys(part.strip() for part in parts if part.strip()))
 
 
 def domain(value):
@@ -75,7 +84,9 @@ def load_sample(directory):
         source = DatasourceInput(name=row["Name"], description=row["Project Description"], domain=domain(row["Mission Domain"]), organization=row["Owning Organization"])
         unique(sources, source.name, source)
     for row in rows(directory, "projects"):
-        project_id = str(UUID(row["Project ID"]))
+        project_id = row["Project ID"]
+        if not project_id:
+            raise ValueError("Project ID must not be empty")
         source_name = row["Datasource"] or None
         if source_name and source_name not in sources:
             raise ValueError(f"Project {project_id}: unknown datasource {source_name}")
