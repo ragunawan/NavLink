@@ -16,7 +16,7 @@ import {projectTypes as types, projectStatuses as statuses, searchModes} from '.
 import {ProjectMetadata} from './components/project-metadata'
 import {RegistryEditor} from './components/registry-editor'
 import {RecordDirectory} from './components/record-directory'
-import {CatalogChatBubble, LibrarianPage} from './components/catalog-chat-bubble'
+import {CatalogChatBubble, LibrarianPage, useLibrarianSession} from './components/catalog-chat-bubble'
 import './data-fields.css'
 
 const PROJECT_MOTTO = 'Create once, discover everywhere, improve together.'
@@ -99,6 +99,7 @@ function App() {
  const [user,setUser]=useState('visitor');const canEdit=identities.data?.find(i=>i.id===user)?.editor??false
  const [selected,setSelected]=useState<string[]>([])
  const location=useLocation()
+ const librarian=useLibrarianSession(user)
  const toggle=(id:string)=>setSelected(ids=>ids.includes(id)?ids.filter(x=>x!==id):ids.length<3?[...ids,id]:ids)
  return <AppContext.Provider value={{user,canEdit,selected,toggle}}>
   <a className="skip-link" href="#main">Skip to content</a>
@@ -117,14 +118,14 @@ function App() {
      <Route path="/projects/:id/edit" element={<RegistryForm/>}/>
      <Route path="/projects/:id" element={<ProjectDetail/>}/>
      <Route path="/check" element={<CheckBeforeBuild user={user}/>}/>
-     <Route path="/librarian" element={<LibrarianPage user={user}/>}/>
-     <Route path="/assistant" element={<LibrarianPage user={user}/>}/>
+     <Route path="/librarian" element={<LibrarianPage session={librarian}/>}/>
+     <Route path="/assistant" element={<LibrarianPage session={librarian}/>}/>
      <Route path="/compare" element={<Compare/>}/>
      <Route path="*" element={<div className="empty"><h1>Page not found</h1><Link to="/">Return to overview</Link></div>}/>
     </Routes>
    </main>
    <footer className="portal-footer"><div><Link to="/" className="footer-brand">NavyLINK</Link><span>{PROJECT_MOTTO}</span></div><div><span className="footer-demo"><Database size={13} aria-hidden="true"/>Synthetic demonstration data</span><span>Demo identity is not production authentication</span></div></footer>
-   <CatalogChatBubble user={user}/>
+   <CatalogChatBubble session={librarian}/>
    {selected.length>0&&<div className="comparison-tray"><GitCompareArrows aria-hidden="true" size={18}/><strong>{selected.length} of 3 selected</strong><Link to="/compare">Compare capabilities </Link><button aria-label="Clear comparison" onClick={()=>setSelected([])}><X aria-hidden="true" size={17}/></button></div>}
   </div>
  </AppContext.Provider>

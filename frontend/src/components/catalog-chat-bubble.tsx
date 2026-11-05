@@ -1,4 +1,4 @@
-import {Fragment, useRef, useState} from 'react'
+import {Fragment, useEffect, useRef, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {ArrowUpRight, Bot, Download, FileText, LoaderCircle, Maximize2, MessageCircle, Send, X} from 'lucide-react'
 import {api} from '../api'
@@ -19,6 +19,16 @@ type ChatProject={
 }
 type ChatResponse={id:string;answer:string;projects:ChatProject[];suggested_questions:string[];model:string;mode:string}
 type ChatMessage={role:'user'|'assistant';content:string;projects?:ChatProject[];mode?:string;model?:string}
+export type LibrarianSession={
+  question:string
+  messages:ChatMessage[]
+  suggestions:string[]
+  pending:boolean
+  error:string
+  hasAssistantReply:boolean
+  setQuestion:(question:string)=>void
+  ask:(text?:string)=>Promise<void>
+}
 
 const starterQuestions=[
   'List projects for predictive maintenance.',
@@ -153,14 +163,21 @@ function exportTranscript(messages:ChatMessage[], format:'txt'|'doc'|'pdf') {
   if(format==='pdf')downloadFile('librarian-chat.pdf','application/pdf',makePdf(text))
 }
 
-function LibrarianChat({user, presentation='floating', onClose, onExpand}:{user:string; presentation?:'floating'|'page'; onClose?:()=>void; onExpand?:()=>void}) {
+export function useLibrarianSession(user:string):LibrarianSession {
   const [question,setQuestion]=useState('')
   const [messages,setMessages]=useState<ChatMessage[]>([])
   const [suggestions,setSuggestions]=useState(commonQuestions)
   const [pending,setPending]=useState(false)
   const [error,setError]=useState('')
-  const inputRef=useRef<HTMLTextAreaElement|null>(null)
   const hasAssistantReply=messages.some(message=>message.role==='assistant')
+
+  useEffect(()=>{
+    setQuestion('')
+    setMessages([])
+    setSuggestions(commonQuestions)
+    setPending(false)
+    setError('')
+  }, [user])
 
   async function ask(text=question) {
     const trimmed=text.trim()
@@ -176,9 +193,15 @@ function LibrarianChat({user, presentation='floating', onClose, onExpand}:{user:
       setError(e instanceof Error?e.message:'Unable to ask the catalog chatbot.')
     } finally {
       setPending(false)
-      setTimeout(()=>inputRef.current?.focus(),0)
     }
   }
+
+  return {question,messages,suggestions,pending,error,hasAssistantReply,setQuestion,ask}
+}
+
+function LibrarianChat({session, presentation='floating', onClose, onExpand}:{session:LibrarianSession; presentation?:'floating'|'page'; onClose?:()=>void; onExpand?:()=>void}) {
+  const inputRef=useRef<HTMLTextAreaElement|null>(null)
+  const {question,messages,suggestions,pending,error,hasAssistantReply,setQuestion,ask}=session
 
   return <section className={'catalog-chat-panel '+presentation} aria-label={chatTitle}>
       <header><div><span><Bot size={16}/>{chatTitle}</span><small>Ask the current database for projects, data, and workflows.</small></div><div className="catalog-chat-actions">{hasAssistantReply&&<div className="catalog-chat-export" aria-label="Export chat"><button title="Export TXT" aria-label="Export chat as TXT" onClick={()=>exportTranscript(messages,'txt')}><FileText size={16}/><span>TXT</span></button><button title="Export DOC" aria-label="Export chat as DOC" onClick={()=>exportTranscript(messages,'doc')}><Download size={16}/><span>DOC</span></button><button title="Export PDF" aria-label="Export chat as PDF" onClick={()=>exportTranscript(messages,'pdf')}><Download size={16}/><span>PDF</span></button></div>}{onExpand&&<button aria-label="Open full Librarian page" onClick={onExpand}><Maximize2 size={18}/></button>}{onClose&&<button aria-label="Close Librarian" onClick={onClose}><X size={18}/></button>}</div></header>
@@ -191,22 +214,22 @@ function LibrarianChat({user, presentation='floating', onClose, onExpand}:{user:
       </div>
       <form onSubmit={event=>{event.preventDefault();void ask()}}>
         <div className="chat-input-wrap">
-          <textarea ref={inputRef} aria-label="Ask the Librarian" rows={presentation==='page'?3:2} maxLength={1200} placeholder="What are you looking for?" value={question} onChange={event=>setQuestion(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();void ask()}}}/>
+          <textarea ref={inputRef} aria-label="Ask the Librarian" rows={presentation==='page'?3:2} maxLength={1200} placeholder="What are you looking for?" value={question} onChange={event=>setQuestion(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();void ask();setTimeout(()=>inputRef.current?.focus(),0)}}}/>
         </div>
         <button aria-label="Send question" disabled={pending||!question.trim()}><Send size={17}/></button>
       </form>
     </section>
 }
 
-export function LibrarianPage({user}:{user:string}) {
-  return <section className="librarian-page"><LibrarianChat user={user} presentation="page"/></section>
+export function LibrarianPage({session}:{session:LibrarianSession}) {
+  return <section className="librarian-page"><LibrarianChat session={session} presentation="page"/></section>
 }
 
-export function CatalogChatBubble({user}:{user:string}) {
+export function CatalogChatBubble({session}:{session:LibrarianSession}) {
   const [open,setOpen]=useState(false)
   const navigate=useNavigate()
   return <div className={'catalog-chat '+(open?'open':'')}>
-    {open&&<LibrarianChat user={user} presentation="floating" onExpand={()=>navigate('/librarian')} onClose={()=>setOpen(false)}/>}
+    {open&&<LibrarianChat session={session} presentation="floating" onExpand={()=>{setOpen(false);navigate('/librarian')}} onClose={()=>setOpen(false)}/>}
     <button className="catalog-chat-toggle" aria-label={open?'Close Librarian':'Open Librarian'} onClick={()=>setOpen(value=>!value)}>{open?<X size={23}/>:<MessageCircle size={25}/>}</button>
   </div>
 }
