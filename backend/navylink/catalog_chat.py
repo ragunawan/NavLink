@@ -7,11 +7,13 @@ import httpx
 from pydantic import BaseModel, Field
 
 from .auth import authorized, present
+from .openai_search import openai_search
 from .search import search
 
 
 MAX_CONTEXT_CHARS = 18_000
 MAX_HISTORY_CHARS = 12_000
+MAX_PROJECTS = 5
 STOPWORDS = {"what", "which", "would", "could", "should", "there", "with", "from", "that", "this", "have", "help", "using", "based", "about", "list", "show", "give"}
 WORKFLOW_TERMS = {"workflow", "pipeline", "build", "implement", "combine", "end-to-end", "start", "finish", "steps", "process"}
 UNRELIABLE_TERMS = {"unreliable", "avoid", "weak", "risky", "risk", "omit", "liability", "liabilities", "least"}
@@ -36,6 +38,7 @@ class CatalogChatProject(BaseModel):
     status: str
     project_type: str
     mission_problem: str
+    description: str
     datasets: list[str]
     technologies: list[str]
     reliability: int
@@ -78,6 +81,7 @@ def _projects_from_search(result) -> list[CatalogChatProject]:
             status=project["status"],
             project_type=project["project_type"],
             mission_problem=project["mission_problem"],
+            description=project["description"][:1000],
             datasets=[item["name"] for item in project["datasets"]],
             technologies=project["technologies"],
             reliability=reliability,
@@ -115,14 +119,14 @@ def _project_text(project: CatalogChatProject) -> str:
 def _filter_projects(question: str, projects: list[CatalogChatProject]) -> list[CatalogChatProject]:
     terms = _question_terms(question) - WORKFLOW_TERMS - UNRELIABLE_TERMS
     if not terms:
-        return projects[:5]
+        return projects[:MAX_PROJECTS]
     filtered = []
     for project in projects:
         text = _project_text(project)
         matches = {term for term in terms if term in text}
         if matches or project.reliability >= 80:
             filtered.append(project)
-    return filtered[:5]
+    return filtered[:MAX_PROJECTS]
 
 
 def _catalog_reliability(project: dict) -> int:
@@ -156,11 +160,12 @@ def _unreliable_projects(session, user, question: str) -> list[CatalogChatProjec
             id=project["id"], name=project["name"], url=f"/projects/{project['id']}", domain=project["domain"],
             organization=project["organization"], status=project["status"], project_type=project["project_type"],
             mission_problem=project["mission_problem"], datasets=[item["name"] for item in project["datasets"]],
+            description=project["description"][:1000],
             technologies=project["technologies"], reliability=reliability,
             usefulness="Low" if reliability < 55 else "Medium" if reliability < 75 else "High",
         ))
     rows.sort(key=lambda project: (project.reliability, project.status != "Retired", project.name))
-    return rows[:8]
+    return rows[:MAX_PROJECTS]
 
 
 def _format_project_line(project: CatalogChatProject) -> str:
@@ -275,13 +280,16 @@ def _history_text(history: list[CatalogChatMessage]) -> str:
 
 
 def answer_catalog_chat(session, user, payload: CatalogChatRequest) -> CatalogChatResponse:
-    if _is_unreliable_question(payload.question):
+    model = (os.getenv("OPENAI_CHAT_MODEL") or os.getenv("OPENAI_MODEL", "gpt-6.1-terra")).strip()
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("NAVYLINK_LLM_API_KEY", "")
+    if api_key:
+        result = openai_search(session, user, payload.question, limit=MAX_PROJECTS)
+        projects = _projects_from_search(result)
+    elif _is_unreliable_question(payload.question):
         projects = _unreliable_projects(session, user, payload.question)
     else:
         result = search(session, user, payload.question, mode="hybrid", limit=8)
         projects = _filter_projects(payload.question, _projects_from_search(result))
-    model = os.getenv("OPENAI_CHAT_MODEL", os.getenv("OPENAI_MODEL", "terra-6.1"))
-    api_key = os.getenv("OPENAI_API_KEY", os.getenv("NAVYLINK_LLM_API_KEY", ""))
     if not api_key:
         return CatalogChatResponse(id=str(uuid4()), answer=_fallback(payload.question, projects), projects=projects, suggested_questions=_suggestions(payload.question, projects), model=model, mode="local")
 
@@ -293,7 +301,8 @@ def answer_catalog_chat(session, user, payload: CatalogChatRequest) -> CatalogCh
         "Use real Markdown headers, short paragraphs, bullets, numbered lists, bold labels, and code blocks only when they make the answer easier to scan. "
         "Avoid giant walls of text. Keep the initial answer concise and leave deeper details for suggested follow-up questions. "
         "First classify the user's request. If they ask to list, find, compare, or identify projects/data, answer exactly that and do not add a workflow. "
-        "If they ask for unreliable, risky, avoid, liability, or omit candidates, rank records by low reliability and explain why they should be avoided, deferred, or verified. "
+        "When listing matching projects, preserve the supplied relevance order and discuss at most the five supplied projects. "
+        "If they ask for unreliable, risky, avoid, liability, or omit candidates, explain which supplied records should be avoided, deferred, or verified. "
         "Only provide a workflow when the user explicitly asks how to build, implement, pipeline, combine, or create a workflow. "
         "For workflow requests, use these Markdown sections: ## Technical Workflow, ### Reusable Project Parts, ### Data Pipeline, ### Processing And Model Layer, ### Dashboard / End Result, ## Reuse Candidates, ## Liability / Omit Candidates, and ## Required Confirmation. "
         "For each workflow part, explain which catalog project or dataset supports it, how useful/reliable it is, and whether the user should reuse, add, verify, omit, or defer that part. "

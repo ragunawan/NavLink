@@ -12,6 +12,7 @@ type ChatProject={
   status:string
   project_type:string
   mission_problem:string
+  description:string
   datasets:string[]
   technologies:string[]
   reliability:number
@@ -207,7 +208,7 @@ function LibrarianChat({session, presentation='floating', onClose, onExpand}:{se
       <header><div><span><Bot size={16}/>{chatTitle}</span><small>Ask the current database for projects, data, and workflows.</small></div><div className="catalog-chat-actions">{hasAssistantReply&&<div className="catalog-chat-export" aria-label="Export chat"><button title="Export TXT" aria-label="Export chat as TXT" onClick={()=>exportTranscript(messages,'txt')}><FileText size={16}/><span>TXT</span></button><button title="Export DOC" aria-label="Export chat as DOC" onClick={()=>exportTranscript(messages,'doc')}><Download size={16}/><span>DOC</span></button><button title="Export PDF" aria-label="Export chat as PDF" onClick={()=>exportTranscript(messages,'pdf')}><Download size={16}/><span>PDF</span></button></div>}{onExpand&&<button aria-label="Open full Librarian page" onClick={onExpand}><Maximize2 size={18}/></button>}{onClose&&<button aria-label="Close Librarian" onClick={onClose}><X size={18}/></button>}</div></header>
       <div className="catalog-chat-body">
         {!messages.length&&<div className="catalog-chat-empty"><strong>What are you trying to build?</strong><p>Start with one of these, or ask for an end-to-end workflow.</p><div>{starterQuestions.map(item=><button key={item} onClick={()=>void ask(item)}>{item}</button>)}</div></div>}
-        {messages.map((message,index)=><article key={index} className={'chat-message '+message.role}>{message.role==='assistant'?<MarkdownText text={message.content}/>:<p>{message.content}</p>}{message.projects?.length?<div className="chat-projects">{message.projects.slice(0,3).map(project=><a key={project.id} href={project.url}><div><strong>{project.name}</strong><span>{project.organization} · {project.domain}</span><p>{project.mission_problem}</p><small>{project.reliability}% useful · {project.usefulness} reliability · {project.status}</small></div><ArrowUpRight size={14}/></a>)}</div>:null}</article>)}
+        {messages.map((message,index)=><article key={index} className={'chat-message '+message.role}>{message.role==='assistant'?<MarkdownText text={message.content}/>:<p>{message.content}</p>}{message.projects?.length?<div className="chat-projects">{message.projects.slice(0,5).map(project=><a key={project.id} href={project.url}><div><strong>{project.name}</strong><span>{project.organization} · {project.domain}</span><p>{project.mission_problem}</p><small>{project.reliability}% useful · {project.usefulness} reliability · {project.status}</small></div><ArrowUpRight size={14}/></a>)}</div>:null}</article>)}
         {messages.length>0&&!pending&&<div className="catalog-chat-followups" aria-label="Suggested follow-up questions">{suggestions.slice(0,3).map(item=><button key={item} onClick={()=>void ask(item)}>{item}</button>)}</div>}
         {pending&&<div className="chat-message assistant loading-row"><LoaderCircle className="spin" size={16}/>Thinking through matching projects and workflow pieces…</div>}
         {error&&<div className="catalog-chat-error" role="alert">{error}</div>}

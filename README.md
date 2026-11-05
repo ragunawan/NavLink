@@ -2,141 +2,216 @@
 
 **Create once, discover everywhere, improve together.**
 
-**Navy Locator for Innovation, Networking, and Knowledge.** A functional local capability discovery and reuse advisor for the November 4–6, 2026 FleetHacker demonstration.
+**Navy Locator for Innovation, Networking, and Knowledge** helps people find existing capabilities, assess overlap before building, and discover projects, datasets, and collaborators. It combines a React interface, a FastAPI API, and a local SQLite catalog for the November 4–6, 2026 FleetHacker demonstration.
 
-Projects, organizations, people, datasets and resource links are fictional. The application contains no operational Navy information. The sample catalog contains 500 projects, 256 people and 214 datasources, all publicly discoverable demo records. The separate 56-project regression fixture catalog includes 42 public records and role-restricted examples. Access labels are application demo permissions, not classification markings.
+All bundled projects, organizations, people, datasets, and resource links are fictional. The sample catalog contains **500 projects, 256 people, and 214 datasources**, all publicly discoverable demo records. A separate **56-project regression catalog** contains 42 public projects and role-restricted examples. Application access labels are demo permissions, not classification markings.
 
-![NavyLINK overview](docs/dashboard.png)
+![NavyLINK homepage showing sample catalog counts, discovery directories, and recently updated projects](docs/dashboard.png)
 
-The homepage provides search with supported filters, live catalog counts, mission-domain and organization directories, and recently updated projects. See the [homepage implementation and verification notes](docs/HOMEPAGE.md).
+## What you can do
 
-Project registration also supports the [documented catalog fields](docs/data/README.md), including classification, network accessibility, registered personnel references, sponsors, datasources, and catalog-managed dates. Personnel and datasource registries are available from **People & data**.
+| Workflow | Where to start | Behavior |
+| --- | --- | --- |
+| Discover capabilities | **Catalog** · `/catalog` | Search in Hybrid, Keyword, Semantic, or SI Powered mode; filter by mission domain, type, organization, and status. Browsing shows 50 projects per page. |
+| Inspect and compare | A project card · `/projects/{id}` | Read mission evidence, datasets, technologies, personnel, access instructions, and related capabilities. Select two or three projects to compare at `/compare`. |
+| Check before building | **Prebuild** · `/check` | Describe a mission need, run a streamed local assessment, and inspect reuse leads, collaboration opportunities, citations, and eight reuse checks per candidate. |
+| Ask the catalog | **Librarian** · `/librarian` | Ask freeform questions, find projects, or request a workflow. The floating chat shares the same session; `/assistant` is an alias. Export the conversation as TXT, DOC, or PDF. |
+| Find people and data | **Registry** · `/people`, `/datasources` | Search personnel and datasource registries. Project metadata links to registered POCs, team members, and datasources. |
+| Contribute records | `/projects/new` | Select **Catalog curator** to create, edit, or delete records. Registration checks overlap before saving; metadata suggestions remain editable and require review before applying. |
 
-## Develop in a container (Windows, macOS, Linux)
+The homepage also provides live counts, mission-domain and organization directories, and recently updated projects. Counts and evidence always reflect the selected demo identity.
 
-Open this repository in VS Code with Docker running and the Dev Containers extension installed, then choose **Dev Containers: Reopen in Container**. Setup installs Python 3.12, Node 22, project dependencies and Playwright Chromium, seeds a separate development database, and builds the frontend. Run `make run` in the container terminal and open http://127.0.0.1:8000, or use `make dev-api` and `make dev-ui` in separate terminals for live reloads.
+## Screenshots
 
-Windows contributors should use Docker Desktop with the WSL 2 backend and Linux containers. Python, Node and Make are provided inside the container. See the [devcontainer guide](docs/DEVCONTAINER.md) for setup, testing, dependency updates and data persistence.
+Captured November 5, 2026 from the sample catalog using the bundled local encoder and no API keys. These are real browser captures of the running application.
+
+**Catalog search** — ranked results with mission evidence and supported filters.
+
+![Hybrid search for predictive maintenance with the Maintenance domain filter](docs/catalog.png)
+
+**Prebuild assessment** — a completed local workflow with a recommended path and linked catalog evidence.
+
+![Completed Check before you build assessment with cited recommendations](docs/advisor.png)
+
+**Librarian** — a catalog question answered locally, with matching project links and transcript exports.
+
+![Librarian answering a predictive maintenance question from the sample catalog](docs/assistant.png)
+
+More views: [project detail](docs/project.png), [proposal form](docs/phase2-proposal.png), [personnel registry](docs/registry.png), and [mobile homepage](docs/mobile.png). See the [screenshot guide](docs/SCREENSHOTS.md) to reproduce all eight captures.
 
 ## Run locally
 
-Requires Python **3.12+**, Node **22+**, npm, and SQLite with FTS5 (included in standard Python builds). Initial dependency installation requires networking. Runtime needs no internet, API key, external LLM or model download.
+Requires **Python 3.12+**, **Node 22+**, npm, Make, and SQLite with FTS5 (included in standard Python builds). Run commands from the repository root. Initial dependency installation needs internet access; the default runtime uses local assets, SQLite, and a bundled encoder, with no API key or model download required.
 
 ```sh
-make setup PYTHON=python3.14  # or your installed Python 3.12+
+make setup                     # creates .venv and .env if needed; seeds and builds
+# Or choose your Python explicitly: make setup PYTHON=python3.12
 make run
 ```
 
-Open **http://127.0.0.1:8000**. FastAPI serves the compiled React app and API together. API documentation: **http://127.0.0.1:8000/docs**. SQLite persists in `data/navylink.db`. `make setup` creates `.env` from `.env.example` if absent. On this workspace dependencies and the compiled frontend are installed, and the sample catalog is loaded.
+Open **http://127.0.0.1:8000**. FastAPI serves the compiled frontend and API together. Interactive API documentation is at **http://127.0.0.1:8000/docs**; the health endpoint is **http://127.0.0.1:8000/api/health**. The default database is `data/navylink.db`.
 
-For live frontend development, run `make dev-api` and `make dev-ui` in separate terminals, then open http://127.0.0.1:5173. Vite proxies `/api` to the local API. It does not need CORS exposure.
+`make setup` seeds the 56-project regression catalog only when the database is empty. To load the larger sample catalog shown above, stop the API and run:
 
 ```sh
-make seed       # initialize only if the catalog is empty
-make sample     # back up SQLite and replace the catalog with data/sample CSVs
-make reset      # DESTRUCTIVE to demo catalog and agent history: restore fictional seed
-make reindex    # rebuild persisted vectors and FTS5 documents after encoder changes
+PYTHONPATH=backend .venv/bin/python -m navylink.import_sample --dry-run
+make sample                    # backs up SQLite, then replaces the catalog and run history
+make run
 ```
 
-`make reset` preserves organization/domain lookup rows; visible facets derive exclusively from live authorized projects, so stale lookup rows are not exposed. Stop the server before replacing a demo. See the [sample import and backup instructions](docs/data/README.md#sample-catalog).
+The importer preserves sample IDs and historical dates and validates personnel/datasource references. Startup retains an existing catalog. See [sample import and backup instructions](docs/data/README.md#sample-catalog).
 
-## Implemented workflows
-
-- Persistent registry with create, browse, read, partial update and delete; input validation, domain extensions, datasets, approved contacts, resources and access instructions.
-- Natural-language search with keyword FTS5, local semantic vectors, configurable weighted Reciprocal Rank Fusion, filters applied before ranking, evidence snippets and transparent encoder reporting. **OpenAI rerank** uses `OPENAI_API_KEY` and `OPENAI_CHAT_MODEL` to reorder the top 50 local results; it sends the query and matching authorized project details to OpenAI's API and never adds projects outside that local result set.
-- Related projects use mission retrieval, datasets, domains, technologies and stated use cases; comparison of two or three projects includes descriptions, intended users and highlighted shared attributes.
-- **Check before you build** accepts a proposed name, mission or description, domain, intended users, datasets, technologies and desired capabilities. Only a mission problem or description is required. Five leads display initially, with expansion to all assessed candidates. Registration checks overlap before saving and the detail page can open a prefilled proposal.
-- Bounded deterministic advisor: runs hybrid retrieval, expands related entries, inspects the records, compares overlap, evaluates reuse constraints, and produces a consolidated recommendation with field-level citations. Its real execution timeline streams to the interface with start/end times and durations.
-- Assessments include selectable side-by-side comparison, separate duplicate/dataset/collaboration/complementary paths, and eight reuse checks per candidate. Completed local run URLs can be reloaded; changed record/contact permissions invalidate saved evidence.
-- Dashboard metrics, lifecycle counts, recently updated projects and collaboration leads calculated from authorized records.
-- **Discovery assistant** at `/assistant` answers questions using up to five authorized records, exact field citations, next steps, limitations and an execution summary. It supports optional configured OpenAI-compatible/Ollama generation and automatically falls back to structured deterministic answers.
-- **Suggest metadata** in registration and the proposal form suggests editable metadata. Applying suggestions requires explicit review; stale suggestions must be refreshed. It never assigns owners, status, POCs or access permissions.
-- Responsive React interface with local shadcn-style Button, Tailwind, Lucide, React Router and TanStack Query. No remote fonts, scripts or image dependencies.
-
-## Search and overlap decisions
-
-The default `bundled-concept-v1` encoder is a small, deterministic 512-dimensional mission-concept and token-hash baseline. Synonyms such as machinery/equipment, budget/financial and forecast/predictive map to common concepts. It is deliberately limited: it does not understand arbitrary language, negation or all mission nuances. It is **not a neural model**. Vectors persist with an encoder identifier; changes rebuild vectors on edits, and `make reindex` updates the entire catalog. Encoder mismatches are recomputed locally for visible entries during reads.
-
-An optional **Sentence Transformers all-MiniLM-L6-v2** encoder supports richer local embeddings:
+For live reload, run these in separate terminals, then open **http://127.0.0.1:5173**:
 
 ```sh
-make model  # online setup: installs optional packages, saves model under data/models/
-# Add to .env:
-# NAVYLINK_MODEL_PATH=data/models/all-MiniLM-L6-v2
+make dev-api
+make dev-ui
+```
+
+Vite proxies `/api` to port 8000. Changes to `.env` require an API restart.
+
+## Develop in a container
+
+With Docker running and the VS Code Dev Containers extension installed, open the repository and choose **Dev Containers: Reopen in Container**. Setup installs Python 3.12, Node 22, project dependencies, and Playwright Chromium, initializes a separate development database, and builds the frontend. The startup hook starts the API at port 8000; `make run` starts it manually when needed.
+
+Windows contributors should use Docker Desktop with WSL 2 and Linux containers. Python, Node, and Make are provided inside the container. The development database lives in its own named volume at `/var/lib/navylink/navylink.db`. See the [devcontainer guide](docs/DEVCONTAINER.md) for setup, testing, and persistence.
+
+## Configuration
+
+Copy `.env.example` to `.env` if you have not run `make setup`. Keep credentials in the ignored local `.env`; all provider requests run on the server.
+
+| Setting | Default / purpose |
+| --- | --- |
+| `NAVYLINK_DB` | `data/navylink.db`; SQLite location. |
+| `NAVYLINK_FRONTEND` | `frontend/dist`; compiled frontend location. |
+| `NAVYLINK_SEMANTIC_WEIGHT` | `0.55`; semantic contribution to hybrid rank fusion, from 0 to 1. |
+| `NAVYLINK_MODEL_PATH` | Unset; optionally load a prepared local Sentence Transformers model. |
+| `NAVYLINK_DEMO_USERS` | Unset; optionally load a JSON file of demo identities. |
+| `OPENAI_API_KEY`, `OPENAI_CHAT_MODEL` | Optional SI Powered reranking and Librarian generation. The model default in this repository is `gpt-6.1-terra`; use a model available to your account that supports the implemented requests. |
+| `NAVYLINK_LLM_PROVIDER` | `none`; optional `openai` or `ollama` provider for question requests to `/api/v1/agent/discover`. |
+
+**Hybrid**, **Keyword**, and **Semantic** search stay local. **SI Powered** (`mode=openai`) retrieves up to 50 authorized hybrid matches, sends the query and bounded project details to OpenAI for reranking, and accepts only a valid permutation of those candidates. It cannot introduce additional projects. Missing credentials or a failed ranking return an error.
+
+**Librarian** uses the same SI Powered ranking when a key is configured, then answers from the top five projects in relevance order, including their descriptions and links. Ranking failures surface as errors; answer-generation failures keep the ranked project links and use a local answer template. Without a key, Librarian uses local catalog matching. Its displayed usefulness/reliability values are application heuristics, not measured probabilities or deployment approval.
+
+The separate `/api/v1/agent/discover` question API supports constrained OpenAI-compatible or Ollama generation with local citation validation and deterministic fallback. The current Librarian interface uses `/api/v1/chat/catalog`. **Prebuild proposal assessments remain deterministic** regardless of provider settings.
+
+For a fully local session, leave both `OPENAI_API_KEY` and `NAVYLINK_LLM_API_KEY` empty: the latter is also a fallback key for SI Powered and Librarian, even when `NAVYLINK_LLM_PROVIDER=none`. See the [configuration and troubleshooting guide](docs/CONFIGURATION.md) for all settings, provider behavior, and container overrides.
+
+## Search and reuse assessment
+
+Local hybrid retrieval combines FTS5 keyword and semantic ranks with weighted Reciprocal Rank Fusion (rank constant 60). Filters and authorization apply before ranking. Lexical queries build an in-memory FTS5 index from the authorized, filtered subset so hidden documents cannot affect BM25 statistics. SQLite also maintains persistent search documents and vectors.
+
+The default **`bundled-concept-v1`** encoder is a deterministic, 512-dimensional mission-concept and token-hash baseline. It maps known synonyms but is not a neural model and has limited handling of arbitrary language, negation, and mission nuance. An optional local **Sentence Transformers all-MiniLM-L6-v2** encoder is available:
+
+```sh
+make model                     # online preparation: optional packages and model weights
+# Add NAVYLINK_MODEL_PATH=data/models/all-MiniLM-L6-v2 to .env
 make reindex
 make run
 ```
 
-Runtime uses `local_files_only=True`, `trust_remote_code=False` and CPU execution. A missing configured model fails instead of silently reaching the internet or substituting an encoder. To return to the baseline, remove the model path, reindex and restart. Include `data/models/all-MiniLM-L6-v2` when transferring a neural-mode demo to another machine. The base Docker image includes the bundled encoder; optional neural dependencies and weights are not included in that image.
+Runtime uses local files only, CPU execution, and no remote model code. A missing configured model fails clearly. To return to the baseline, remove the model path, reindex, and restart. Model weights are ignored by Git and are not included in the base Docker image; transfer them separately when using neural mode offline.
 
-MiniLM weights have been prepared in this workspace. The test suite includes outbound-socket denial with offline environment flags set. See [evaluation results](docs/EVALUATION.md) and `docs/evaluation-neural.json` for the current observed results. Model artifacts are ignored by Git.
+Prebuild expands hybrid results through related projects, inspects records, compares candidates, and streams actual operation progress. Only a mission problem or description is required. Five leads appear initially, with expansion to all assessed candidates. Completed run URLs can be reloaded while their catalog evidence and identity scope remain valid.
 
-Hybrid retrieval fuses keyword and semantic ranks with rank constant 60. `NAVYLINK_SEMANTIC_WEIGHT` defaults to `0.55` (range 0–1). FTS queries use escaped token terms rather than raw FTS syntax. For this small catalog, lexical search creates an in-memory FTS5 index from the authorized filtered subset. This avoids hidden documents influencing BM25 statistics. SQLite also keeps a transactional persistent FTS document index. Vectors use no corpus-fitted vocabulary or training on hidden entries.
+Recommendations distinguish potential duplicates, related work, complementary capabilities, datasets, and historical references. Mission evidence drives duplication; shared technology alone does not establish it. Exact dataset and audience names provide supporting evidence. Each candidate includes checks for licensing, access, deployment, integration, datasets, support status, technology, and approved contacts. Missing metadata stays unknown, and stated terms still require confirmation. The application executes no personnel contact or access requests.
 
-Duplicate assessment uses stated mission concepts, exact mission terms, project type, status and exact supplied dataset names. A potential duplicate needs broad concept coverage with supporting exact mission terms, or strong exact mission-term overlap. This also supports specific missions outside the concept vocabulary, such as hull corrosion inspection. Failure-prediction proposals require the candidate mission to state failure concepts. A dataset is classified as a relevant dataset; retired entries are historical references. Technology alone never establishes duplication. The mission ontology and overlap rules are inspectable in `encoding.py` and `advisor.py`.
-
-Recommendations cite the exact authorized catalog field and value supporting a statement, linked to its project record. Eight reuse checks cover licensing, access, deployment, integration, datasets, support status, technology and approved contacts. Missing metadata stays unknown; stated terms still need confirmation. A proposed stack with no shared stated technologies is flagged as an unverified compatibility question. Technologies do not establish mission duplication. Dataset evidence uses exact names. No external actions, personnel contact or access requests are executed. See [agent behavior and API contract](docs/AGENT.md).
-
-Phase 2 adds advisory relationships: **Potential Duplicate**, **Strongly Related**, **Complementary**, and **Weakly Related**. Mission evidence, domain, exact dataset/user/technology matches, deliverable type and status contribute to classification or relative ordering; similarity is never a duplicate probability. Different stated audiences downgrade a potential duplicate to a related lead; a proposed dataset can complement an application with a different deliverable. See [Phase 2 implementation and provider setup](docs/PHASE2.md).
-
-Existing JSON catalog records keep their supported metadata when upgrading; the removed File(s) and Keywords fields are migrated out of storage and retrieval indexes. Missing intended-user metadata displays as unknown. New seed fixtures include fictional intended users; use `make reset` only if you intend to replace the demo data. Older saved assessments expire as the response contract changes. `make reindex` refreshes persistent FTS documents; lexical queries build their current authorized index dynamically.
+See the [agent behavior and API contract](docs/AGENT.md), [retrieval and provider details](docs/PHASE2.md), and [evaluation report](docs/EVALUATION.md) for decision rules and measured limitations.
 
 ## Demo identities and permissions
 
-The `X-Demo-User` header selects a **non-production identity**:
+The identity selector sends an `X-Demo-User` header. This is a demonstration mechanism, not production authentication.
 
-| Identity | Visible records | Editing |
+| Identity | Visible projects | Editing |
 | --- | --- | --- |
-| `visitor` | Public entries | No |
-| `analyst` | Public + internal entries | No |
+| `visitor` | Public | No |
+| `analyst` | Public + internal | No |
 | `maintainer` | Public + internal + maintenance-demo group | No |
 | `curator` | Public + internal + maintenance-demo and finance-demo groups | Yes |
 
-Add or override identities with `NAVYLINK_DEMO_USERS=/path/to/users.json`, a JSON array such as `[{"id":"reviewer","label":"Demo reviewer","internal":true,"groups":["maintenance-demo"],"editor":false}]`. Restart the server after configuration changes. The interface reads its identity options and editor role from the API. The editor role does not bypass record visibility.
+All 500 sample projects are public, so use the separate regression fixtures to demonstrate restricted visibility. Search, related projects, comparisons, chat context, suggestions, analytics, and registries enforce visibility on the server. Contacts and registry references have additional visibility checks; unavailable IDs return the same 404 as missing records. The editor role does not bypass visibility.
 
-Every search, related lookup, comparison, agent tool, RAG context, metadata suggestion, analytics response and facet uses authorized records. Hidden IDs return the same 404 as nonexistent records. Contact visibility is enforced separately. API responses are marked `no-store` and vary by demo identity. Agent runs belong to their creating identity. Catalog mutations invalidate runs, and retrieval also verifies an identity-scope fingerprint and authorized record snapshots, including contact visibility, before replaying evidence. Older workflow-version snapshots expire. Identity changes clear browser query and comparison state.
+Identity changes clear browser query, chat, and comparison state. Saved runs belong to their creating identity; catalog mutations and changed permissions invalidate evidence. API responses use `no-store` and vary by identity. Custom demo identities can be supplied through `NAVYLINK_DEMO_USERS`; see the [configuration guide](docs/CONFIGURATION.md#demo-identities).
 
-There are no export or relationship-graph endpoints in this milestone. A production deployment requires approved authentication, authorization, data handling, audit, transport and security controls. Anyone with local access can select a demo role; this is intentional for the demonstration. Bind only to loopback outside a specifically approved environment. Do not ingest controlled operational data into this prototype.
+A production deployment requires approved authentication, authorization, data handling, audit, transport, and security controls. Keep this fictional-data demo on loopback outside a specifically approved environment. Do not ingest controlled operational data.
 
 ## Verification and evaluation
 
 ```sh
-make test      # backend tests + TypeScript and production frontend build
-make evaluate  # separate temporary seeded DB; writes docs/evaluation.json
-# Against the sample catalog running on port 8000:
-NAVYLINK_SAMPLE_TEST=1 npm --prefix frontend test -- sample-import.spec.ts
+make test                      # backend tests, TypeScript check, production frontend build
+make evaluate                  # isolated seeded DB; writes docs/evaluation.json
+cd frontend && npx playwright install chromium  # one-time browser installation
 ```
 
-The remaining browser journeys use the 56-project regression fixtures. Start an isolated server with a fresh temporary database in another terminal, then run them against port 8013:
+Run browser regression journeys against a fresh temporary database. In one terminal:
 
 ```sh
-NAVYLINK_DB="$(mktemp -d)/navylink.db" PYTHONPATH=backend .venv/bin/python -m uvicorn navylink.main:app --host 127.0.0.1 --port 8013
-# In another terminal:
+NAVYLINK_DB="$(mktemp -d)/navylink.db" NAVYLINK_MODEL_PATH= \
+  OPENAI_API_KEY= NAVYLINK_LLM_API_KEY= NAVYLINK_LLM_PROVIDER=none \
+  PYTHONPATH=backend .venv/bin/python -m uvicorn navylink.main:app \
+  --host 127.0.0.1 --port 8013
+```
+
+In another terminal, from the repository root:
+
+```sh
 NAVYLINK_TEST_URL=http://127.0.0.1:8013 npm --prefix frontend test
 ```
 
-Browser tests require a local Chromium installation: run `cd frontend && npx playwright install chromium` during online setup if needed. GitHub Actions installs it and runs the backend, build, evaluation and browser suite. CI configuration is provided; a hosted CI run has not been observed from this workspace.
+The two sample-import journeys require the 500-project catalog instead. With a sample server running at port 8000:
 
-See [evaluation report](docs/EVALUATION.md) for measured results and their limits. The harness includes 15 manually labeled queries, 10 known similar pairs, 10 unrelated pairs, five near-duplicate and five complementary/nonduplicate proposals, six permission checks, and a check of every cited field against its actual API record. The test suite runs the evaluation twice and requires repeatable outcomes. Tests cover related-entry expansion, real progress, canceled/failed runs, permission changes, uncertainty, metadata suggestions, both provider protocols and rejection of invented model facts/actions. Tests deny outbound sockets; browser tests block external HTTP while keeping loopback available.
+```sh
+NAVYLINK_SAMPLE_TEST=1 npm --prefix frontend test -- sample-import.spec.ts
+```
 
-## Offline packaging
+The regression browser suite writes screenshots to `docs/`; run the [sample screenshot capture](docs/SCREENSHOTS.md) afterward to restore the README gallery. The capture script checks sample counts, completed assessment and chat responses, mobile overflow, browser errors, and external asset requests.
 
-After setup and build, `make run` uses only local dependencies, assets, SQLite and vectors. Keep `.venv` on its original platform; virtual environments are not portable across operating systems. To transfer the application, package the source with compatible offline dependency wheels/npm cache or prepare a container image on the target architecture before disconnecting.
+The [evaluation harness](docs/EVALUATION.md) covers 15 labeled queries, 10 known similar pairs, 10 unrelated pairs, five near-duplicate and five complementary/nonduplicate proposals, six permission checks, and exact cited-field verification. These are synthetic fixture measurements, not independent real-world performance claims. GitHub Actions is configured to run backend, build, evaluation, and browser checks.
+
+## Docker and offline packaging
 
 ```sh
 docker compose build
 docker compose up -d
 # Open http://127.0.0.1:8000
-docker compose exec navylink python -m navylink.seed --reset
+docker compose logs -f navylink
+```
+
+The image builds the frontend, installs backend dependencies, and imports the sample CSVs into its database during the image build. A new Compose `navylink-data` volume receives that database; an existing volume retains its catalog across rebuilds. The image includes CSVs at `/app/sample` for explicit replacement:
+
+```sh
+docker compose stop navylink
+docker compose run --rm navylink python -m navylink.import_sample --directory /app/sample --replace
+docker compose up -d
+```
+
+This replaces catalog records and workflow history after making a database backup in the volume. Compose forwards only the environment variables listed in `compose.yaml`; the image excludes `.env`. SI Powered and Librarian credentials need the [documented Compose override](docs/CONFIGURATION.md#docker-configuration).
+
+Prepare the image online before moving to a compatible offline host:
+
+```sh
 docker save navylink:demo -o navylink-demo.tar
-# On a compatible offline host: docker load -i navylink-demo.tar
+# Transfer the archive and compose.yaml to a compatible host, then:
+docker load -i navylink-demo.tar
 docker compose up --no-build -d
 ```
 
-The Compose named volume stores SQLite; the image ships seed definitions and creates the DB on first startup. Docker builds need internet access once for base images and dependencies. Container deployment is provided but has not been run on this host because Docker is unavailable. No claim of edge readiness, power efficiency or production deployment is made.
+Database contents in an existing named volume are separate from the image archive. For native offline use, prepare dependencies and the frontend first; Python virtual environments must remain on their original platform. Optional external providers need connectivity, while the default local workflows do not. Container deployment was not exercised during this documentation refresh; no production or edge-readiness claim is made.
 
-## Structure and next steps
+## Project documentation
 
-`backend/navylink/` contains schema, database, authorization, registry, encoders, search, advisor and evaluation. `backend/tests/` verifies the workflows. `frontend/src/` contains the connected interface; `frontend/tests/` contains browser journeys. `docs/` includes architecture, measured evaluation, screenshots and a [three-minute demo script](docs/DEMO.md).
+| Guide | Contents |
+| --- | --- |
+| [Architecture](docs/ARCHITECTURE.md) | Components, retrieval, persistence, and authorization boundaries. |
+| [Configuration](docs/CONFIGURATION.md) | Environment variables, provider paths, Docker overrides, and troubleshooting. |
+| [Catalog fields and sample import](docs/data/README.md) | Project, personnel, and datasource contracts; import and backup behavior. |
+| [Demo walkthrough](docs/DEMO.md) | Three-minute sample-catalog tour and optional regression permission demo. |
+| [Screenshots](docs/SCREENSHOTS.md) | Capture inventory and reproducible isolated setup. |
+| [Agent contract](docs/AGENT.md) | Streamed workflow, bounds, citations, and saved assessments. |
+| [Provider and retrieval details](docs/PHASE2.md) | Advisory relationships and constrained question-generation API. |
+| [Evaluation](docs/EVALUATION.md) | Measured fixture results and limits. |
+| [Dev containers](docs/DEVCONTAINER.md) | Cross-platform setup, dependency updates, and persistent development data. |
+| [Homepage implementation](docs/HOMEPAGE.md) | Homepage components and original verification notes. |
 
-The next implementation milestone is independent retrieval evaluation with a larger, varied labeled catalog, followed by approved identity integration and a live test against an approved generation endpoint. Optional capability network visualization and synchronization are deferred. The default configuration needs no cloud service or LLM.
+Source lives in `backend/navylink/` and `frontend/src/`; tests live in `backend/tests/` and `frontend/tests/`. `data/sample/` contains the fictional CSV catalog. Relationship graphs, synchronization, production identity integration, and independent retrieval evaluation remain future work.

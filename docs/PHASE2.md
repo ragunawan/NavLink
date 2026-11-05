@@ -2,6 +2,8 @@
 
 The existing React, FastAPI, SQLAlchemy and SQLite architecture is preserved. The registry, FTS5, local encoders, RRF retrieval, streamed advisor, related projects, comparison and authorization already existed. This phase extends those components and adds a separate retrieval/generation path for questions.
 
+**Current interface:** the navigation labels this proposal workflow **Prebuild** and the catalog chat **Librarian**. Librarian at `/librarian` (also `/assistant`) now calls `/api/v1/chat/catalog`, using local templates or optional SI Powered reranking and OpenAI generation. The constrained RAG behavior and `NAVYLINK_LLM_*` provider setup below describe question input to `/api/v1/agent/discover`, which remains available as an API. See [current configuration](CONFIGURATION.md) for the distinction and shared-key fallback.
+
 ## Completed
 
 - Full proposal contract: proposed name, mission problem or description, domain, intended users, datasets, technology and desired capabilities. Mission/description validation is server-side. Description-only and mission-only requests work.
@@ -16,7 +18,7 @@ The existing React, FastAPI, SQLAlchemy and SQLite architecture is preserved. Th
 
 `POST /api/v1/agent/discover` accepts either a proposal or `{"question":"…"}`. A question can also include `generation: "deterministic"`, structured domain/type/status/organization filters, or up to two explicit project IDs. The default `auto` generation uses the configured provider when available. Explicitly named/selected authorized projects can supply a two-project comparison.
 
-The response includes `answer`, catalog `facts`, field-level `citations`, `referenced_project_ids`, up to five `retrieved_projects`, advisory `recommendations`, `uncertainty`, `execution_steps`, `generation_mode`, and optional comparison. Question answers are returned per request; proposal assessments retain their persisted run workflow. Browser identity changes clear either view.
+The response includes `answer`, catalog `facts`, field-level `citations`, `referenced_project_ids`, up to five `retrieved_projects`, advisory `recommendations`, `uncertainty`, `execution_steps`, `generation_mode`, and optional comparison. Question answers are returned per request; proposal assessments retain their persisted run workflow. Librarian has its own response contract and browser session state.
 
 The `/api/discovery/check-duplicate`, `/api/projects/{id}/related`, `/api/projects/compare` and `/api/agent/discover` aliases use the same policies as their canonical `/api/v1` routes. OpenAPI documents the canonical versions.
 
@@ -50,12 +52,12 @@ NAVYLINK_LLM_TIMEOUT=5
 
 Ollama uses `/api/chat`, nonstreaming generation and a JSON schema in `format`, following the [official Ollama chat API](https://docs.ollama.com/api/chat). NavyLINK does not install or download an Ollama model. Prepare it before disconnecting. Both providers have bounded response sizes, no redirect following, no retries and a configurable timeout capped at 30 seconds. Credentials stay on the server and are not returned in error messages. Configure a base URL reachable from the deployment environment; container loopback is the container, not the host's model server.
 
-Only the question assistant uses optional generation. Proposal retrieval, classification, ranking, comparison and recommendations stay deterministic. If a configured provider becomes unreachable offline, question answering automatically falls back. The interface's deterministic-only checkbox skips generation even when a provider is configured.
+These provider settings apply to question input on `/api/v1/agent/discover`. Proposal retrieval, classification, ranking, comparison and recommendations stay deterministic. If a configured provider becomes unreachable offline, this question API automatically falls back. Set `generation: "deterministic"` in a question request to skip generation even when a provider is configured. Librarian uses the separate key/model configuration documented in [CONFIGURATION.md](CONFIGURATION.md#si-powered-search-and-librarian).
 
 ## Verification and remaining limits
 
-Provider integration is tested through actual HTTP client request/response handling with in-process transport fixtures for OpenAI-compatible and Ollama protocols. These tests use retrieved database evidence, exercise error cases and validate all accepted claims. **No real external or local generative model inference was run** because no approved live provider was configured. Live provider quality/latency is therefore unverified.
+Provider integration is tested through actual HTTP client request/response handling with in-process transport fixtures for OpenAI-compatible and Ollama protocols. These tests use retrieved database evidence, exercise error cases and validate all accepted claims. Fixture results do not establish live provider quality or latency. The November 5 documentation capture used local matching with provider keys disabled.
 
 The default encoder and ontology remain small. Dataset and audience overlaps use exact names; intent, negation and complex compatibility require human review. Scope/record fingerprints expire old saved proposal evidence, and all API responses are noncacheable across identities. Demo roles remain non-production authentication.
 
-Free-form model synthesis, a relationship graph, synchronization, and production identity integration are deferred. Docker/Compose files are maintained, but container launch remains unverified on this host. See `EVALUATION.md` for observed native results and limitations.
+The constrained question API intentionally limits generation to validated evidence selection; the separate Librarian path supports catalog-grounded prose. A relationship graph, synchronization, and production identity integration are deferred. Docker/Compose files are maintained; container deployment was not exercised during this documentation refresh. See `EVALUATION.md` for observed native results and limitations.

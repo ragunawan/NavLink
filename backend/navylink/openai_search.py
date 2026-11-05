@@ -49,7 +49,7 @@ def _candidate(hit):
 
 def openai_search(session, user, query, filters=None, limit=30):
     api_key = os.getenv("OPENAI_API_KEY") or os.getenv("NAVYLINK_LLM_API_KEY", "")
-    model = (os.getenv("OPENAI_CHAT_MODEL") or os.getenv("OPENAI_MODEL", "terra-6.1")).strip()
+    model = (os.getenv("OPENAI_CHAT_MODEL") or os.getenv("OPENAI_MODEL", "gpt-6.1-terra")).strip()
     if not api_key:
         raise HTTPException(503, "OpenAI search requires OPENAI_API_KEY.")
     if not model.strip():

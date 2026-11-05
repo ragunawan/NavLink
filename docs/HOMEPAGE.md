@@ -1,5 +1,7 @@
 # NavyLINK homepage redesign
 
+These notes describe the original homepage implementation and its November 4 verification. The current header uses Home, Catalog, Librarian, Prebuild, and Registry; search now also offers **SI Powered** alongside the three local modes. Screenshots were refreshed November 5 from the 500-project sample catalog. See the [README](../README.md), [configuration guide](CONFIGURATION.md), and [capture guide](SCREENSHOTS.md) for current usage.
+
 The homepage now follows the discovery layout in the supplied brief: a full-width navy and gold header, centered NavyLINK hero, prominent search, three live discovery cards, and recent project cards. The existing proposal workflow remains available through the header and the “Explore your idea” callout.
 
 ![Desktop homepage](dashboard.png)
@@ -8,7 +10,7 @@ The homepage now follows the discovery layout in the supplied brief: a full-widt
 
 | File | Responsibility |
 | --- | --- |
-| `frontend/src/components/app-header.tsx` | `AppHeader`: branding, all existing navigation destinations, comparison count, demo identity, and collapsible navigation with Escape handling. |
+| `frontend/src/components/app-header.tsx` | `AppHeader`: branding, primary navigation, demo identity, and collapsible navigation with Escape handling. Comparison remains available through project controls and the comparison tray. |
 | `frontend/src/components/homepage.tsx` | `HomePage`, `HomeSearch`, and `DiscoveryCard`: hero, submitted searches with selectable search modes, expandable filters, suggestion chips, live counts, recent projects, and loading/error/empty states. |
 | `frontend/public/assets/uss-iowa.jpg` | Locally bundled public-domain U.S. Navy photo of USS Iowa (BB-61), used as the homepage's grayscale animated ship cutout. |
 | `frontend/src/components/discovery-directory.tsx` | `DiscoveryDirectory`: authorized mission-domain and organization browsing pages. |
@@ -35,10 +37,10 @@ No backend endpoints, API schemas, search algorithms, authentication rules, or d
 | --- | --- |
 | `GET /api/v1/analytics/overview` | Total projects, distinct visible mission domains, and recently updated project records. |
 | `GET /api/v1/organizations` | Organization count, organization filter, and directory. |
-| `GET /api/v1/search` | Submitted queries with supported `project_type`, `domain`, `organization`, and `status` filters. Both the homepage and catalog offer Hybrid, Keyword/FTS5, and Semantic modes. |
+| `GET /api/v1/search` | Submitted queries with supported `project_type`, `domain`, `organization`, and `status` filters. Both the homepage and catalog offer Hybrid, Keyword/FTS5, Semantic, and optional SI Powered modes. |
 | `GET /api/v1/projects/page` | Paginated browsing with filters and no query. |
 
-The main navigation and catalog page use the label **Catalog**. The homepage defaults to Hybrid search; its always-visible Search mode dropdown also offers Keyword and Semantic. Submitted queries and suggestion chips carry the chosen mode and filters to the catalog, where changing the query preserves those selections. Empty queries browse filtered projects while retaining the chosen mode for the next search. Clearing homepage filters leaves the mode selected.
+The main navigation and catalog page use the label **Catalog**. The homepage defaults to Hybrid search; its always-visible Search mode dropdown also offers Keyword, Semantic, and SI Powered. SI Powered requires a configured server key and sends bounded authorized results to OpenAI for reranking. Submitted queries and suggestion chips carry the chosen mode and filters to the catalog, where changing the query preserves those selections. Empty queries browse filtered projects while retaining the chosen mode for the next search. Clearing homepage filters leaves the mode selected.
 
 Queries retain the current `X-Demo-User` identity. Counts and directory entries reflect authorized records, and changing identities clears cached evidence and comparison selections. There are no fixed statistics in the UI. The seed catalog currently gives Public visitor 42 projects, 7 mission domains, and 8 organizations; the tests also check Catalog curator against API responses.
 
