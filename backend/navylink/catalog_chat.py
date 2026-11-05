@@ -172,16 +172,16 @@ def _fallback(question: str, projects: list[CatalogChatProject]) -> str:
         return "I could not find matching projects in the authorized catalog view. Try asking about a mission area, dataset, technology, or workflow."
     if _is_unreliable_question(question):
         return "\n".join([
-            "Least Reliable / Highest Verification Burden",
+            "**Least Reliable / Highest Verification Burden**",
             *[_format_project_line(project) for project in projects[:6]],
             "",
-            "Avoid / Defer Guidance",
+            "**Avoid / Defer Guidance**",
             "- Defer retired records unless you only need lessons learned.",
             "- Verify concept or in-development records before reuse.",
             "- Treat missing license, deployment, integration, contact, or dataset details as blockers until confirmed.",
         ])
     if not _is_workflow_question(question):
-        lines = ["Closest matching projects:"]
+        lines = ["**Closest Matching Projects**"]
         for project in projects[:5]:
             lines.append(_format_project_line(project))
         return "\n".join(lines)
@@ -195,39 +195,39 @@ def _fallback(question: str, projects: list[CatalogChatProject]) -> str:
     data_steps = [f"- {name}: validate availability, schema, freshness and access before use." for name in dataset_names[:6]]
     tech_steps = [f"- {name}: candidate implementation/deployment technology from matched records." for name in technology_names[:6]]
     return "\n".join([
-        "Technical Workflow",
-        f"Anchor capability: {lead.name} ({lead.reliability}% useful match)",
-        f"Target outcome: a predictive fleet maintenance dashboard using the strongest matching catalog capability as the baseline.",
+        "**Technical Workflow**",
+        f"Anchor capability: **{lead.name}** ({lead.reliability}/100 reliability).",
+        "Target outcome: a usable workflow built from the strongest matching catalog records.",
         "",
-        "1. Reusable Project Parts",
+        "**1. Reusable Project Parts**",
         *(project_parts or ["- No reusable project parts were identified."]),
         "",
-        "2. Data Pipeline",
+        "**2. Data Pipeline**",
         *(data_steps or ["- No data sources were stated in the matched records."]),
         "- Normalize identifiers across work orders, supply parts, readiness/backlog records and project-specific crosswalks.",
         "- Create quality checks for missing dates, stale work orders, duplicate equipment IDs and unmatched parts.",
         "",
-        "3. Processing And Model Layer",
+        "**3. Processing And Model Layer**",
         *(tech_steps or ["- No technologies were stated in the matched records."]),
         "- Join maintenance history, supply availability and backlog signals into a feature table.",
         "- Score risk or priority using the most relevant matched model/forecast project, then preserve explainable fields for watchstander review.",
         "",
-        "4. Dashboard / End Result",
+        "**4. Dashboard / End Result**",
         "- Display prioritized maintenance risks, supply blockers, recommended actions and confidence/reliability notes.",
         "- Link each recommendation back to the source dataset or reused project pattern.",
         "- Keep export/import paths simple enough for disconnected or edge use.",
         "",
-        "Reuse Candidates",
+        "**Reuse Candidates**",
         f"{', '.join(reusable) or 'None with high local reliability.'}",
         "",
-        "Supporting Candidates",
+        "**Supporting Candidates**",
         f"{', '.join(project.name for project in supporting[:4]) or 'None identified.'}",
         "",
-        "Liability / Omit Candidates",
+        "**Liability / Omit Candidates**",
         f"{', '.join(optional) or 'None flagged by low local reliability.'}",
         "Omit or defer any part with weak reliability, missing access instructions, unclear data ownership, stale data, or incompatible technology until verified.",
         "",
-        "Required Confirmation",
+        "**Required Confirmation**",
         "Confirm access, licensing, data freshness, integration compatibility and ownership before using any part.",
     ])
 
@@ -289,10 +289,13 @@ def answer_catalog_chat(session, user, payload: CatalogChatRequest) -> CatalogCh
     instructions = (
         "You are LinkBot, the NavyLINK catalog chatbot. Answer only from the supplied authorized catalog records. "
         "Users may ask any freeform question about the current database; the three starter questions are examples only. "
+        "Format user-facing answers in clean Markdown that will be rendered in a compact chat bubble. "
+        "Use short paragraphs, bullets, numbered lists, bold labels, and code blocks only when they make the answer easier to scan. "
+        "Avoid giant walls of text. Keep the initial answer concise and leave deeper details for suggested follow-up questions. "
         "First classify the user's request. If they ask to list, find, compare, or identify projects/data, answer exactly that and do not add a workflow. "
         "If they ask for unreliable, risky, avoid, liability, or omit candidates, rank records by low reliability and explain why they should be avoided, deferred, or verified. "
         "Only provide a workflow when the user explicitly asks how to build, implement, pipeline, combine, or create a workflow. "
-        "For workflow requests, format the answer with clear section headings: Technical Workflow, Reusable Project Parts, Data Pipeline, Processing And Model Layer, Dashboard / End Result, Reuse Candidates, Liability / Omit Candidates, and Required Confirmation. "
+        "For workflow requests, use clear bold section labels: Technical Workflow, Reusable Project Parts, Data Pipeline, Processing And Model Layer, Dashboard / End Result, Reuse Candidates, Liability / Omit Candidates, and Required Confirmation. "
         "For each workflow part, explain which catalog project or dataset supports it, how useful/reliable it is, and whether the user should reuse, add, verify, omit, or defer that part. "
         "Do not use markdown heading markers like ###. Do not output markdown links. Format project references as '- Project Name -- Category [project type]; Reliability [number]/100; Usefulness [High/Medium/Low]. Description.' "
         "If the supplied records are weakly related or insufficient, say so and do not force a match. "
