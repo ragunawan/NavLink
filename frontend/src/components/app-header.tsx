@@ -20,10 +20,10 @@ export function AppHeader({user, identities, selectedCount, onIdentityChange}:{
     <div className="navy-header-inner">
       <Link className="navy-brand" to="/" aria-label="NavyLINK home">
         <span className="navy-brand-mark"><Compass size={29} strokeWidth={1.5} aria-hidden="true"/></span>
-        <span>Navy<span className="brand-gold">LINK</span><small>CONNECTING NAVY INNOVATION</small></span>
+        <span>Navy<span className="brand-gold">LINK</span><small>Connecting Navy innovation</small></span>
       </Link>
       <button ref={menuToggle} className="navy-menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded={open} aria-controls="primary-navigation" onClick={()=>setOpen(!open)}>
-        {open ? <X size={24}/> : <Menu size={24}/>}
+        {open ? <X aria-hidden="true" size={24}/> : <Menu aria-hidden="true" size={24}/>}
       </button>
       <nav id="primary-navigation" className={'navy-navigation'+(open?' is-open':'')} aria-label="Main navigation" onKeyDown={e=>{if(e.key==='Escape'){setOpen(false);menuToggle.current?.focus()}}}>
         <NavLink to="/" end>Home</NavLink>

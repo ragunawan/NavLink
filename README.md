@@ -12,6 +12,12 @@ The homepage provides search with supported filters, live catalog counts, missio
 
 Project registration also supports the [documented catalog fields](docs/data/README.md), including classification, network accessibility, registered personnel references, sponsors, datasources, and catalog-managed dates. Personnel and datasource registries are available from **People & data**.
 
+## Develop in a container (Windows, macOS, Linux)
+
+Open this repository in VS Code with Docker running and the Dev Containers extension installed, then choose **Dev Containers: Reopen in Container**. Setup installs Python 3.12, Node 22, project dependencies and Playwright Chromium, seeds a separate development database, and builds the frontend. Run `make run` in the container terminal and open http://127.0.0.1:8000, or use `make dev-api` and `make dev-ui` in separate terminals for live reloads.
+
+Windows contributors should use Docker Desktop with the WSL 2 backend and Linux containers. Python, Node and Make are provided inside the container. See the [devcontainer guide](docs/DEVCONTAINER.md) for setup, testing, dependency updates and data persistence.
+
 ## Run locally
 
 Requires Python **3.12+**, Node **22+**, npm, and SQLite with FTS5 (included in standard Python builds). Initial dependency installation requires networking. Runtime needs no internet, API key, external LLM or model download.
