@@ -104,7 +104,7 @@ function App() {
  return <AppContext.Provider value={{user,canEdit,selected,toggle}}>
   <a className="skip-link" href="#main">Skip to content</a>
   <div className="portal-shell">
-   <AppHeader user={user} identities={identities.data} selectedCount={selected.length} onIdentityChange={value=>{setUser(value);setSelected([]);queryClient.clear()}}/>
+   <AppHeader user={user} identities={identities.data} onIdentityChange={value=>{setUser(value);setSelected([]);queryClient.clear()}}/>
    <main id="main" tabIndex={-1} key={user} className={location.pathname==='/'?'portal-main portal-home':'portal-main'}>
     <ErrorBox error={identities.error}/>
     <Routes>

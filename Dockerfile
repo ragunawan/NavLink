@@ -17,3 +17,4 @@ USER navylink
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=2)"
 CMD ["python", "-m", "uvicorn", "navylink.main:app", "--host", "0.0.0.0", "--port", "8000"]
+RUN python -m navylink.import_sample --directory /app/sample --replace
