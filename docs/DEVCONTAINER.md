@@ -61,6 +61,6 @@ Inside the container, `NAVYLINK_DB` is set to `/var/lib/navylink/navylink.db`. T
 
 After changing requirements or the npm lockfile, run `make setup`. After changing Playwright, also run `cd frontend && npx playwright install --with-deps chromium`. After changing `devcontainer.json`, run **Dev Containers: Rebuild Container**; setup runs again and keeps existing catalog data. To recover from a failed initial download, rerun `bash .devcontainer/post-create.sh` inside the container.
 
-Git uses LF line endings for text files through `.gitattributes`. If an older Windows checkout still has CRLF endings in `.devcontainer/post-create.sh`, select **LF** in VS Code's status bar and save it before reopening the container.
+`.devcontainer/post-create.sh` is enforced to use LF line endings through `.gitattributes`, so Bash can run it on Windows checkouts as well.
 
 The root `Dockerfile` and `compose.yaml` remain the deployment and offline packaging workflow described in the [README](../README.md#offline-packaging).
