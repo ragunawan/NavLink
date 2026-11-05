@@ -159,7 +159,7 @@ test('mobile navigation and local discovery with all external HTTP blocked',asyn
  await expect(page.locator('body')).toHaveJSProperty('scrollWidth',390)
  await page.screenshot({path:'../docs/mobile.png',fullPage:true})
  await page.getByRole('button',{name:'Toggle navigation'}).click()
- await page.getByRole('link',{name:'Discover capabilities',exact:true}).click()
+ await page.getByRole('link',{name:'Catalog',exact:true}).click()
  await page.getByRole('textbox',{name:'Search capabilities'}).fill('financial datasets')
  await page.getByRole('button',{name:'Search',exact:true}).click()
  await expect(page.locator('.project-card').first()).toBeVisible()

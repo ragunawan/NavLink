@@ -1,0 +1,94 @@
+[
+ {
+  "date": "2026-11-04",
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "app",
+  "theme": "vantage",
+  "by_request": true,
+  "shape": "app screen",
+  "axes": "blue-black / Geologica / lime",
+  "hero": "working catalog search; application scope",
+  "nav": "existing top navigation, collapses at 1190px",
+  "footer": "NavyLINK identity and unchanged demonstration notices",
+  "imagery": "existing authorized live catalog; no image slots",
+  "photos": [],
+  "entry": "catalog search",
+  "fingerprint": {
+   "shell": "top navigation",
+   "opening": "split introduction and working search",
+   "records": "full-width ruled rows",
+   "figures": "linked counts in corner frames",
+   "directories": "two columns of records",
+   "actions": "lime primary pills"
+  },
+  "sections": [
+   "catalog search",
+   "authorized totals",
+   "recent capabilities",
+   "check before you build",
+   "catalog records",
+   "project evidence",
+   "registries",
+   "advisor",
+   "assistant",
+   "comparison",
+   "registration"
+  ],
+  "signature": "Linked projects, people and datasources in the working capability catalog",
+  "waived": [
+   "49b"
+  ],
+  "waiver_reasons": {
+   "49b": "Preserve full stored project titles with wrapping on phones; shortening would obscure record identity."
+  },
+  "prompt": "Hallmark full redesign of NavyLINK; user requests Vantage theming.",
+  "review": {
+   "mode": "in-thread",
+   "result": "ship",
+   "resolved": 5,
+   "gap": "none",
+   "hero": "not applicable to app screens"
+  },
+  "verification": {
+   "make_test": "94 backend tests passed and production build passed",
+   "browser_regression": "20 passed, 2 sample-only tests skipped in fixture suite",
+   "sample_browser": "2 passed separately",
+   "core_screens": {
+    "fails": 0,
+    "reflex": 0,
+    "warns": 0,
+    "waived": 53,
+    "rejected": 0,
+    "answered": 0,
+    "dismissed": 0,
+    "notes": 0,
+    "files": 17,
+    "render": "ran",
+    "kept": "kept: links 73/73, fields 14/14, handlers 82/82, headings 110/111 (1 dropped on record), figures 60/60; before 436 FAIL, 421 REFLEX, now 0 FAIL, 0 REFLEX"
+   },
+   "other_screens": {
+    "fails": 0,
+    "reflex": 0,
+    "warns": 0,
+    "waived": 6,
+    "rejected": 0,
+    "answered": 0,
+    "dismissed": 0,
+    "notes": 0,
+    "files": 17,
+    "render": "ran"
+   },
+   "rendered_screens": 11,
+   "captures": 55
+  },
+  "preserved": {
+   "links": "73/73",
+   "fields": "14/14",
+   "handlers": "82/82",
+   "figures": "60/60",
+   "headings": "110/111, generic homepage triad reworded on record"
+  },
+  "material_needed": []
+ }
+]

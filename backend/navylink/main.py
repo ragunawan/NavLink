@@ -14,8 +14,8 @@ from pydantic import ValidationError
 from sqlalchemy import delete, select, text
 
 from . import advisor
-from .catalog_records import register_catalog_routes, validate_references
 from .catalog_chat import CatalogChatRequest, CatalogChatResponse, answer_catalog_chat
+from .catalog_records import register_catalog_routes, validate_references
 from .rag import answer_question
 from .rag_schemas import DiscoveryAnswer, DiscoveryQuestion
 from .auth import USERS, authorized, present, require_project

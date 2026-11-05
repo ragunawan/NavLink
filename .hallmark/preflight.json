@@ -1,0 +1,94 @@
+{
+  "scanned": "2026-11-04",
+  "findings": {
+    "fonts": "System sans/Inter fallback in frontend/src/styles.css:3; no local font assets or locked design.md.",
+    "palette": "Navy, navy secondary and gold brand tokens in frontend/src/homepage.css:2-7.",
+    "motion": "CSS hover transitions and spinner; React state only, no animation library.",
+    "spacing": "Hand-authored CSS; capped containers currently vary from 1240 to 1520px.",
+    "framework": "React 19 + Vite 7 + TypeScript, React Router and TanStack Query (frontend/package.json:3-5).",
+    "product": "Running at http://127.0.0.1:8000, sample catalog loaded; all 12 route patterns defined in frontend/src/main.tsx:110-122.",
+    "scope": "Full redesign of app screens inside the existing top navigation shell.",
+    "together_api_key_set": false
+  },
+  "preserve": [
+    "NavyLINK name, compass mark and navy/gold brand palette",
+    "Every route, data call, handler, form field, test hook and demo permission boundary",
+    "All existing facts and sample data; homepage search modes and Catalog terminology"
+  ],
+  "introduce": [
+    "Unified token-based application design system",
+    "Recomposed discovery screen and clearer catalog/workflow hierarchy",
+    "Consistent readable typography, responsive control states and accessible focus",
+    "Before-and-after capture and design audit"
+  ],
+  "routes": [
+    {
+      "route": "/",
+      "file": "frontend/src/components/homepage.tsx",
+      "type": "app screen"
+    },
+    {
+      "route": "/catalog",
+      "file": "frontend/src/main.tsx",
+      "type": "app screen"
+    },
+    {
+      "route": "/domains",
+      "file": "frontend/src/components/discovery-directory.tsx",
+      "type": "app screen"
+    },
+    {
+      "route": "/organizations",
+      "file": "frontend/src/components/discovery-directory.tsx",
+      "type": "app screen"
+    },
+    {
+      "route": "/people",
+      "file": "frontend/src/components/record-directory.tsx",
+      "type": "app screen"
+    },
+    {
+      "route": "/datasources",
+      "file": "frontend/src/components/record-directory.tsx",
+      "type": "app screen"
+    },
+    {
+      "route": "/projects/new",
+      "file": "frontend/src/components/registry-editor.tsx",
+      "type": "app screen"
+    },
+    {
+      "route": "/projects/:id/edit",
+      "file": "frontend/src/components/registry-editor.tsx",
+      "type": "app screen"
+    },
+    {
+      "route": "/projects/:id",
+      "file": "frontend/src/main.tsx",
+      "type": "app screen"
+    },
+    {
+      "route": "/check",
+      "file": "frontend/src/check-before-build.tsx",
+      "type": "app screen"
+    },
+    {
+      "route": "/assistant",
+      "file": "frontend/src/discovery-assistant.tsx",
+      "type": "app screen"
+    },
+    {
+      "route": "/compare",
+      "file": "frontend/src/components/project-comparison.tsx",
+      "type": "app screen"
+    }
+  ],
+  "direction_update": {
+    "requested": "Vantage theming",
+    "theme": "vantage",
+    "source": "explicit user request during redesign",
+    "font": "Self-hosted Geologica variable Latin, SIL OFL",
+    "palette": "Vantage steel, with NavyLINK navy/gold retained as identity tokens",
+    "scope": "All existing app routes"
+  }
+}
