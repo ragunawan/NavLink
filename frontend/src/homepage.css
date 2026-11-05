@@ -28,8 +28,11 @@
 .footer-demo { display: flex; align-items: center; gap: var(--space-xs); }
 .home-page { position: relative; isolation: isolate; }
 .home-ambient { position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); overflow: hidden; pointer-events: none; background: radial-gradient(ellipse 65% 480px at 5% 12%, var(--color-sky-paper), transparent), radial-gradient(ellipse 50% 420px at 100% 28%, var(--color-sea-paper), transparent); mask-image: linear-gradient(to bottom, transparent, black 8%, black 55%, transparent 85%); }
+.home-ship { position: absolute; top: clamp(190px, 27vh, 360px); left: 0; width: clamp(1000px, 125vw, 1700px); height: auto; opacity: 0; animation: home-ship-crossing 110s linear infinite; }
+.home-ship-image { filter: grayscale(1) brightness(1.25) contrast(.82); }
 .home-ambient-dots { position: absolute; inset: -48px; background-image: radial-gradient(circle, var(--color-dot-blue) 1px, transparent 1.5px); background-size: 32px 32px; mask-image: radial-gradient(ellipse at 15% 25%, black, transparent 65%); animation: home-dot-drift 24s ease-in-out infinite alternate; }
 .home-ambient-dots-secondary { background-image: radial-gradient(circle, var(--color-dot-sea) 1.5px, transparent 2px); background-size: 48px 48px; mask-image: radial-gradient(ellipse at 100% 20%, black, transparent 60%); animation-name: home-dot-drift-secondary; animation-duration: 32s; }
+@keyframes home-ship-crossing { 0% { transform: translate3d(calc(-100% - 6vw), 0, 0); opacity: 0; } 8%, 92% { opacity: .12; } 100% { transform: translate3d(calc(100vw + 6vw), 0, 0); opacity: 0; } }
 @keyframes home-dot-drift { to { transform: translate(32px, -32px); } }
 @keyframes home-dot-drift-secondary { to { transform: translate(-48px, 48px); } }
 .home-hero { padding-block: var(--space-xl); display: flex; flex-direction: column; align-items: center; gap: var(--space-lg); }

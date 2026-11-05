@@ -73,7 +73,17 @@ export function HomePage({user,renderProject}:{user:string;renderProject:(projec
   const failed = overview.isError || organizations.isError
 
   return <div className="home-page">
-    <div className="home-ambient" aria-hidden="true"><span className="home-ambient-dots"/><span className="home-ambient-dots home-ambient-dots-secondary"/></div>
+    <div className="home-ambient" aria-hidden="true">
+      <svg className="home-ship" viewBox="0 200 1920 720" aria-hidden="true">
+        <defs>
+          <clipPath id="home-uss-iowa-cutout">
+            <path d="M170 756 174 739 190 739 195 720 203 686 218 657 228 643 239 653 246 703 257 714 286 716 306 721 332 728 361 731 371 708 379 697 389 704 399 729 434 732 447 724 459 729 465 735 495 738 511 711 523 700 536 705 551 737 575 739 588 726 596 697 606 675 618 679 626 732 649 738 668 724 681 682 692 663 704 668 712 723 738 726 754 708 768 678 780 672 791 684 799 721 834 718 849 679 861 656 876 643 887 626 901 612 916 605 933 581 950 565 963 538 976 523 993 517 1005 508 1027 506 1032 474 1045 462 1059 454 1073 407 1083 375 1090 331 1095 239 1107 239 1115 354 1128 377 1153 369 1168 383 1174 415 1191 432 1201 469 1214 461 1228 464 1241 482 1250 503 1284 507 1310 516 1334 538 1348 565 1370 569 1394 588 1423 594 1450 623 1486 635 1518 653 1552 658 1596 661 1640 666 1675 665 1711 659 1701 692 1664 713 1608 733 1544 753 1478 770 1404 790 1329 812 1240 833 1144 850 1042 869 928 884 801 893 655 903 520 909 396 909 303 897 245 878 220 846 200 805 185 780z"/>
+          </clipPath>
+        </defs>
+        <image className="home-ship-image" href="/assets/uss-iowa.jpg" x="0" y="0" width="1920" height="1189" clipPath="url(#home-uss-iowa-cutout)"/>
+      </svg>
+      <span className="home-ambient-dots"/><span className="home-ambient-dots home-ambient-dots-secondary"/>
+    </div>
     <section className="home-hero" aria-labelledby="home-title">
       <div className="home-introduction"><h1 id="home-title">Navy<span>LINK</span></h1>
       <h2>Find what the fleet is building.</h2>

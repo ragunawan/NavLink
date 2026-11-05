@@ -1,5 +1,18 @@
 import {expect, test} from '@playwright/test'
 
+test('homepage shows a slow-moving grayscale photo cutout of USS Iowa', async({page})=>{
+  await page.goto('/')
+  const ship=page.locator('.home-ship')
+  await expect(ship).toHaveAttribute('aria-hidden','true')
+  await expect(ship).toBeVisible()
+  await expect.poll(()=>ship.evaluate(element=>getComputedStyle(element).animationName)).toBe('home-ship-crossing')
+  await expect.poll(()=>ship.evaluate(element=>getComputedStyle(element).animationDuration)).toBe('110s')
+  const photo=ship.locator('image.home-ship-image')
+  await expect(photo).toHaveAttribute('href',/\/assets\/uss-iowa\.jpg/)
+  await expect(ship.locator('#home-uss-iowa-cutout path')).toHaveCount(1)
+  await expect.poll(()=>photo.evaluate(element=>getComputedStyle(element).filter)).toContain('grayscale(1)')
+})
+
 test('homepage counts, recent projects and directories reflect the active identity', async({page,request})=>{
   await page.goto('/')
   const summary=page.getByRole('navigation',{name:'Catalog overview'})

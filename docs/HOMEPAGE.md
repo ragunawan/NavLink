@@ -10,6 +10,7 @@ The homepage now follows the discovery layout in the supplied brief: a full-widt
 | --- | --- |
 | `frontend/src/components/app-header.tsx` | `AppHeader`: branding, all existing navigation destinations, comparison count, demo identity, and collapsible navigation with Escape handling. |
 | `frontend/src/components/homepage.tsx` | `HomePage`, `HomeSearch`, and `DiscoveryCard`: hero, submitted searches with selectable search modes, expandable filters, suggestion chips, live counts, recent projects, and loading/error/empty states. |
+| `frontend/public/assets/uss-iowa.jpg` | Locally bundled public-domain U.S. Navy photo of USS Iowa (BB-61), used as the homepage's grayscale animated ship cutout. |
 | `frontend/src/components/discovery-directory.tsx` | `DiscoveryDirectory`: authorized mission-domain and organization browsing pages. |
 | `frontend/src/catalog-filters.ts` | Shared search-mode, project-type and status values supported by the API. |
 | `frontend/src/homepage.css` | Responsive header, homepage, directories, footer, and shared shell styles. |
@@ -57,6 +58,6 @@ No lint command is configured in the repository. The production build provides t
 
 There are no unfinished required features. The section is labeled **Recently updated on NavyLINK** because the dataset does not expose a reliable popularity metric. Suggestion chips execute the requested example queries; live autocomplete is not added because the existing API does not support it. Project type and status use the existing schema enums; keywords and technologies remain part of the search query rather than disconnected frontend filters.
 
-The data and identities remain the application's fictional demonstration catalog. No external fonts, image services, or additional packages are required. The compass mark uses the existing Lucide icon library.
+The homepage ship is clipped from the locally bundled public-domain U.S. Navy photo [A port bow view of the battleship USS Iowa](https://commons.wikimedia.org/wiki/File:A_port_bow_view_of_the_battleship_USS_Iowa.jpg), credited to PH3 Michael Skeens, USN (October 17, 1987). No image service or additional package is required at runtime. The data and identities remain the application's fictional demonstration catalog. The compass mark uses the existing Lucide icon library.
 
 [Mobile homepage screenshot](mobile.png)
