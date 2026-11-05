@@ -309,6 +309,7 @@ class Activity(BaseModel):
     tool: str
     detail: str
     project_ids: list[str] = Field(default_factory=list)
+    project_names: list[str] = Field(default_factory=list)
     status: Literal["running", "complete", "failed"] = "complete"
     started_at: datetime
     finished_at: datetime | None = None

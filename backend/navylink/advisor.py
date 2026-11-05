@@ -236,6 +236,19 @@ class DiscoveryTools:
     """Real local operations. Each execute yields progress before and after its call."""
     def __init__(self, session, user):
         self.session, self.user, self.timeline = session, user, []
+        self.project_names = {}
+
+    def remember_project_names(self, value):
+        if isinstance(value, dict):
+            project_id = value.get("id", value.get("project_id"))
+            project_name = value.get("name", value.get("project_name"))
+            if isinstance(project_id, str) and isinstance(project_name, str):
+                self.project_names[project_id] = project_name
+            for item in value.values():
+                self.remember_project_names(item)
+        elif isinstance(value, list):
+            for item in value:
+                self.remember_project_names(item)
 
     def execute(self, name, operation, detail, project_ids=()):
         started = time.perf_counter()
@@ -252,6 +265,8 @@ class DiscoveryTools:
             self.timeline.append(activity)
             yield {"type": "activity", "activity": activity}
             raise
+        self.remember_project_names(result)
+        activity["project_names"] = [self.project_names.get(project_id, project_id) for project_id in activity["project_ids"]]
         activity.update(status="complete", detail=detail(result) if callable(detail) else detail,
                         finished_at=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"), elapsed_ms=round((time.perf_counter() - started) * 1000, 3))
         self.timeline.append(activity)

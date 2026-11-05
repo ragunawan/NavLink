@@ -43,6 +43,10 @@ def test_every_citation_matches_an_authorized_record_field(client):
         assert ref["value"] == project[ref["field"]]
     inspected = {i for event in run["timeline"] if event["tool"] == "get_project_details" for i in event["project_ids"]}
     assert {ref["project_id"] for ref in citations} <= inspected
+    for event in run["timeline"]:
+        assert len(event["project_names"]) == len(event["project_ids"])
+        for project_id, project_name in zip(event["project_ids"], event["project_names"]):
+            assert project_name == client.get(URL + "/projects/" + project_id).json()["name"]
     assert run["recommendation"]["decision"] == "investigate_reuse"
     assert run["recommendation"]["actions"]
     assert all(action["citations"] for action in run["recommendation"]["actions"])
